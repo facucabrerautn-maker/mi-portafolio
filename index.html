@@ -21,15 +21,31 @@
     <button class="loader__skip" type="button">Saltar intro</button>
   </div>
 
-  <main class="home" id="inicio" tabindex="-1">
-    <section class="hero">
-      <h1 class="hero__title">Hola, soy Facu.</h1>
-      <p class="hero__lead">Estudiante de programación.</p>
-      <p class="hero__note">Sitio en construcción</p>
+  <main id="inicio" tabindex="-1">
+
+    <section class="home">
+      <div class="hero">
+        <h1 class="hero__title">Hola, soy Facu.</h1>
+        <p class="hero__lead">Estudiante de programación.</p>
+        <a class="hero__link" href="#proyectos">Ver proyectos</a>
+        <p class="hero__note">Sitio en construcción</p>
+      </div>
     </section>
+
+    <!-- Proyectos: carrete 3D. Los proyectos se editan en js/projects-data.js -->
+    <section class="work" id="proyectos" aria-label="Proyectos">
+      <h2 class="work__title"><span>Proyectos.</span><span>Muy pronto.</span></h2>
+      <canvas class="work__canvas" id="reel" tabindex="0" role="group" aria-label="Carrete de proyectos"></canvas>
+      <ul class="work__grid" id="reel-fallback" hidden></ul>
+      <p class="work__hint" id="reel-hint">Arrastrá para explorar</p>
+      <p class="sr-only" id="reel-live" aria-live="polite"></p>
+    </section>
+
   </main>
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
+  <script src="js/projects-data.js"></script>
+  <script src="js/projects-reel.js"></script>
 </body>
 </html>
