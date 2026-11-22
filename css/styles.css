@@ -83,17 +83,24 @@ body {
 
 .loader__stage {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: clamp(20px, 4vmin, 36px);
-  max-width: 92vw;
+  justify-content: center;
+  width: 100%;
 }
 
+/* Logo + texto: un único dibujo centrado */
 .loader__logo {
   display: block;
-  width: clamp(180px, 38vmin, 360px);
+  width: clamp(300px, 64vw, 820px);
+  max-width: 90vw;
   height: auto;
   overflow: visible;
+}
+
+@media (max-width: 600px) {
+  .loader__logo {
+    width: 88vw;
+  }
 }
 
 /* Contornos que se dibujan */
@@ -106,6 +113,12 @@ body {
   stroke-dasharray: var(--len);
   stroke-dashoffset: var(--len);
   opacity: 0;
+}
+
+@media (max-width: 600px) {
+  .loader__logo .stroke {
+    stroke-width: 6;
+  }
 }
 
 .is-playing .stroke {
@@ -151,46 +164,8 @@ body {
   to   { opacity: 0; }
 }
 
-/* Texto "Made by Facu", letra por letra */
-.loader__text {
-  margin: 0;
-  padding-left: 0.34em; /* compensa el espacio final del letter-spacing */
-  font-size: clamp(13px, 2.4vmin, 19px);
-  font-weight: 500;
-  letter-spacing: 0.34em;
-  white-space: nowrap;
-  color: var(--muted);
-}
-
-.loader__text .word--accent {
-  color: var(--fg);
-  font-weight: 700;
-}
-
-.loader__text .ch {
-  display: inline-block;
-  white-space: pre;
-  opacity: 0;
-}
-
-.is-playing .ch {
-  animation: ch-in 600ms var(--ease) calc(var(--t-text) + var(--i) * 55ms) both;
-}
-
-@keyframes ch-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.6em);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Movimiento reducido: logo y texto completos, sin animar */
-.loader.is-static .fill,
-.loader.is-static .ch {
+/* Movimiento reducido: dibujo completo, sin animar */
+.loader.is-static .fill {
   opacity: 1;
 }
 

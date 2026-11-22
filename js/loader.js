@@ -1,11 +1,10 @@
-/* Pantalla de carga: el logo se dibuja, se rellena y aparece "Made by Facu".
-   Los tiempos se calculan según el largo real de cada contorno. */
+/* Pantalla de carga: el logo y el texto "made by facu" se dibujan en una sola
+   animación de trazado y luego se rellenan. Los tiempos se calculan según el
+   largo real de cada contorno. */
 (function () {
   'use strict';
 
   var NS = 'http://www.w3.org/2000/svg';
-  var TEXT = 'Made by Facu';
-  var ACCENT_WORD = 'Facu';
 
   var body = document.body;
   var loader = document.getElementById('loader');
@@ -45,7 +44,7 @@
     return el;
   }
 
-  function buildLogo(data) {
+  function buildDrawing(data) {
     var svg = loader.querySelector('.loader__logo');
     svg.setAttribute('viewBox', data.viewBox);
 
@@ -65,36 +64,12 @@
     return strokes;
   }
 
-  function buildText() {
-    var p = loader.querySelector('.loader__text');
-    var words = TEXT.split(' ');
-    var index = 0;
-    words.forEach(function (w, wi) {
-      var word = document.createElement('span');
-      word.className = 'word' + (w === ACCENT_WORD ? ' word--accent' : '');
-      w.split('').forEach(function (c) {
-        var ch = document.createElement('span');
-        ch.className = 'ch';
-        ch.style.setProperty('--i', index++);
-        ch.textContent = c;
-        word.appendChild(ch);
-      });
-      p.appendChild(word);
-      if (wi < words.length - 1) {
-        p.appendChild(document.createTextNode(' '));
-        index++; // el espacio también cuenta en el ritmo
-      }
-    });
-    return index;
-  }
-
   function start() {
     try {
       var data = window.LOGO_DATA;
       if (!data || !data.paths || !data.paths.length) throw new Error('Sin datos del logo');
 
-      var strokes = buildLogo(data);
-      var letters = buildText();
+      var strokes = buildDrawing(data);
 
       loader.querySelector('.loader__skip').addEventListener('click', leave);
 
@@ -104,26 +79,28 @@
         return;
       }
 
-      // Tiempos: cada contorno según su largo real
+      // Tiempos: cada contorno según su largo real.
+      // El logo arranca primero; el texto se suma enseguida, de izquierda a derecha.
       var lens = strokes.map(function (el) { return el.getTotalLength(); });
       var maxLen = Math.max.apply(null, lens);
+      var logoIndex = 0;
+      var textIndex = 0;
       var end = 0;
+
       strokes.forEach(function (el, i) {
-        var delay = i * 70;
-        var dur = 900 + 1000 * Math.min(1, lens[i] / maxLen);
+        var isText = data.paths[i].g === 'text';
+        var delay = isText ? 450 + (textIndex++) * 40 : (logoIndex++) * 60;
+        var dur = Math.min(1800, 800 + 1000 * Math.sqrt(lens[i] / maxLen));
         el.style.setProperty('--len', lens[i].toFixed(1));
         el.style.setProperty('--delay', delay + 'ms');
         el.style.setProperty('--dur', dur + 'ms');
         end = Math.max(end, delay + dur);
       });
 
-      var tFill = Math.round(end + 120);      // el relleno empieza cuando todos los contornos terminaron
-      var tText = tFill + 200;                // el texto aparece mientras se rellena
-      var tTextEnd = tText + letters * 55 + 600;
-      var tLeave = tTextEnd + 1100;           // pausa con el logo completo
+      var tFill = Math.round(end + 120);  // el relleno empieza cuando todos los contornos terminaron
+      var tLeave = tFill + 700 + 1300;    // relleno (700 ms) + pausa con el dibujo completo
 
       loader.style.setProperty('--t-fill', tFill + 'ms');
-      loader.style.setProperty('--t-text', tText + 'ms');
 
       // Dos frames para que el estado inicial se pinte antes de animar
       requestAnimationFrame(function () {
