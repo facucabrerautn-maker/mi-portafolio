@@ -1,0 +1,273 @@
+/* ==========================================================================
+   Base
+   ========================================================================== */
+:root {
+  --bg: #0a0a0a;
+  --fg: #f4f4f2;
+  --muted: #8d8d89;
+  --ease: cubic-bezier(0.37, 0, 0.63, 1); /* easeInOutSine */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Inter", "Helvetica Neue", Arial, system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Mientras se muestra la pantalla de carga no se puede hacer scroll */
+.js body:not(.is-ready) {
+  overflow: hidden;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   Pantalla de carga
+   ========================================================================== */
+.loader {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  opacity: 1;
+  transition: opacity 600ms var(--ease);
+  /* Red de seguridad: si algo falla, el loader se oculta solo */
+  animation: loader-failsafe 1ms linear 15s forwards;
+}
+
+.js .loader {
+  display: flex;
+}
+
+.loader.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes loader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.loader__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 4vmin, 36px);
+  max-width: 92vw;
+}
+
+.loader__logo {
+  display: block;
+  width: clamp(180px, 38vmin, 360px);
+  height: auto;
+  overflow: visible;
+}
+
+/* Contornos que se dibujan */
+.loader__logo .stroke {
+  fill: none;
+  stroke: var(--fg);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  opacity: 0;
+}
+
+.is-playing .stroke {
+  animation: draw var(--dur) var(--ease) var(--delay) both;
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: var(--len);
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+/* Relleno que aparece cuando todos los contornos terminaron */
+.loader__logo .fill {
+  fill: var(--fg);
+  fill-rule: evenodd;
+  opacity: 0;
+}
+
+.is-playing .fill {
+  animation: fade-in 700ms var(--ease) var(--t-fill) both;
+}
+
+.is-playing .outline {
+  animation: fade-out 700ms var(--ease) var(--t-fill) both;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* Texto "Made by Facu", letra por letra */
+.loader__text {
+  margin: 0;
+  padding-left: 0.34em; /* compensa el espacio final del letter-spacing */
+  font-size: clamp(13px, 2.4vmin, 19px);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.loader__text .word--accent {
+  color: var(--fg);
+  font-weight: 700;
+}
+
+.loader__text .ch {
+  display: inline-block;
+  white-space: pre;
+  opacity: 0;
+}
+
+.is-playing .ch {
+  animation: ch-in 600ms var(--ease) calc(var(--t-text) + var(--i) * 55ms) both;
+}
+
+@keyframes ch-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Movimiento reducido: logo y texto completos, sin animar */
+.loader.is-static .fill,
+.loader.is-static .ch {
+  opacity: 1;
+}
+
+.loader.is-static .outline {
+  display: none;
+}
+
+/* Botón para saltar la intro */
+.loader__skip {
+  position: absolute;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.loader__skip:hover {
+  color: var(--fg);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.loader__skip:focus-visible {
+  color: var(--fg);
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Inicio (contenido provisional)
+   ========================================================================== */
+.home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(24px, 6vw, 80px);
+  outline: none;
+}
+
+.hero {
+  max-width: 44rem;
+  text-align: center;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.hero__lead {
+  margin: 1rem 0 0;
+  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
+  color: var(--muted);
+}
+
+.hero__note {
+  margin: 3rem 0 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5c5c59;
+}

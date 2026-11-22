@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Facu — Portafolio</title>
+  <meta name="description" content="Portafolio de Facu, estudiante de programación.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <script>document.documentElement.className = 'js';</script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Pantalla de carga: el logo se dibuja, se rellena y aparece "Made by Facu" -->
+  <div class="loader" id="loader">
+    <p class="sr-only" role="status">Cargando el portafolio de Facu…</p>
+    <div class="loader__stage" aria-hidden="true">
+      <svg class="loader__logo" viewBox="0 0 650 623" focusable="false"></svg>
+      <p class="loader__text"></p>
+    </div>
+    <button class="loader__skip" type="button">Saltar intro</button>
+  </div>
+
+  <main class="home" id="inicio" tabindex="-1">
+    <section class="hero">
+      <h1 class="hero__title">Hola, soy Facu.</h1>
+      <p class="hero__lead">Estudiante de programación.</p>
+      <p class="hero__note">Sitio en construcción</p>
+    </section>
+  </main>
+
+  <script src="assets/logo-paths.js"></script>
+  <script src="js/loader.js"></script>
+</body>
+</html>
