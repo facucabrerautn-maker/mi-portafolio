@@ -26,8 +26,32 @@ html {
   }
 }
 
+/* Fondo unificado: UN solo gradiente continuo detrás de Inicio y Proyectos.
+   Va sobre todo el <main> (y no sobre cada sección) para que no haya costura entre ambas,
+   y sin elementos más grandes que la pantalla ni filtros de blur, así no genera scroll lateral.
+   Paleta: #071B3A (bordes, oscuro) → #75DCFF (centro, brillante).
+   Para ajustarlo: el 0.35 de la capa "oscurece" controla qué tan oscuro es el conjunto, y
+   "85% 60%" controla el tamaño del brillo central (ancho y alto). */
 #inicio {
+  position: relative;
   outline: none;
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px) 0 0 / 6px 6px, /* puntos sutiles */
+    linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece */
+    radial-gradient(
+      ellipse 85% 60% at 50% 50%,
+      #75DCFF 0%,
+      #54CCFA 11%,
+      #36B9F5 22%,
+      #20A6F0 33%,
+      #168FE5 44%,
+      #1678D2 55%,
+      #145DA8 66%,
+      #10447F 77%,
+      #0A2D5E 88%,
+      #071B3A 100%
+    ),
+    var(--bg);
 }
 
 body {
@@ -286,45 +310,7 @@ body {
   min-height: 100dvh;
   padding: clamp(24px, 6vw, 80px);
   outline: none;
-  background: var(--bg);
-  isolation: isolate;
-}
-
-/* Fondo: mismo gradiente radial difuminado que .work */
-.home::before {
-  content: '';
-  position: absolute;
-  inset: -40%;
-  z-index: -1;
-  background:
-    radial-gradient(
-      ellipse at 50% 50%,
-      #75DCFF 0%,
-      #54CCFA 11%,
-      #36B9F5 22%,
-      #20A6F0 33%,
-      #168FE5 44%,
-      #1678D2 55%,
-      #145DA8 66%,
-      #10447F 77%,
-      #0A2D5E 88%,
-      #071B3A 100%
-    );
-  filter: blur(120px);
-  opacity: 0.6;   /* más oscuro que antes (era 0.9) */
-  pointer-events: none;
-}
-
-/* Patrón de puntos sutil (consistente con .work) */
-.home::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px);
-  background-size: 6px 6px;
-  pointer-events: none;
+  /* el fondo viene del <main> (ver #inicio) */
 }
 
 .hero {
@@ -375,47 +361,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
-  background: var(--bg); /* base #0a0a0a */
-  isolation: isolate;    /* para que el blur del pseudo-elemento no se escape */
-}
-
-/* Fondo: gradiente radial difuminado (afuera oscuro → centro brillante)
-   Paleta: #071B3A → #0A2D5E → #10447F → #145DA8 → #1678D2 → #168FE5 → #20A6F0 → #36B9F5 → #54CCFA → #75DCFF
-   ::before se blurea para que no se note el cambio entre colores */
-.work::before {
-  content: '';
-  position: absolute;
-  inset: -40%;           /* más grande que la sección para que el blur no corte en bordes */
-  z-index: -1;
-  background:
-    radial-gradient(
-      ellipse at 50% 50%,
-      #75DCFF 0%,        /* centro: más brillante */
-      #54CCFA 11%,
-      #36B9F5 22%,
-      #20A6F0 33%,
-      #168FE5 44%,
-      #1678D2 55%,
-      #145DA8 66%,
-      #10447F 77%,
-      #0A2D5E 88%,
-      #071B3A 100%       /* bordes: tono oscuro predominante */
-    );
-  filter: blur(120px);   /* difumina las transiciones entre paradas */
-  opacity: 0.7;   /* más oscuro que antes (era 0.95) */
-  pointer-events: none;
-}
-
-/* Patrón de puntos sutil encima del gradiente (opcional, da textura) */
-.work::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image:
-    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px);
-  background-size: 6px 6px;
-  pointer-events: none;
+  /* el fondo viene del <main> (ver #inicio) */
 }
 
 /* El canvas del carrete queda encima (z-index: 1 por defecto) */
