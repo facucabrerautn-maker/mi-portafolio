@@ -59,6 +59,62 @@ body {
 }
 
 /* ==========================================================================
+   Logo del sitio (esquina superior izquierda) — logo + "Made by Facu"
+   ========================================================================== */
+.site-logo {
+  position: fixed;
+  top: clamp(16px, 3vw, 28px);
+  left: clamp(16px, 3vw, 28px);
+  z-index: 100;
+  display: block;
+  opacity: 0.7;
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.site-logo:hover,
+.site-logo:focus-visible {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+.site-logo:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 6px;
+  border-radius: 8px;
+}
+
+.site-logo__svg {
+  display: block;
+  width: clamp(120px, 12vw, 170px);
+  height: auto;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.35));
+}
+
+/* Paths del logo (se inyectan desde logo-paths.js) */
+.site-logo__svg .logo-fill {
+  fill: var(--fg);
+  fill-rule: evenodd;
+}
+
+/* Ocultar logo durante la carga para que no se superponga */
+.js body:not(.is-ready) .site-logo {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-logo {
+    transition: none;
+  }
+  .site-logo:hover,
+  .site-logo:focus-visible {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
    Pantalla de carga
    ========================================================================== */
 .loader {
@@ -222,6 +278,7 @@ body {
    Inicio (contenido provisional)
    ========================================================================== */
 .home {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,6 +286,45 @@ body {
   min-height: 100dvh;
   padding: clamp(24px, 6vw, 80px);
   outline: none;
+  background: var(--bg);
+  isolation: isolate;
+}
+
+/* Fondo: mismo gradiente radial difuminado que .work */
+.home::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      #75DCFF 0%,
+      #54CCFA 11%,
+      #36B9F5 22%,
+      #20A6F0 33%,
+      #168FE5 44%,
+      #1678D2 55%,
+      #145DA8 66%,
+      #10447F 77%,
+      #0A2D5E 88%,
+      #071B3A 100%
+    );
+  filter: blur(120px);
+  opacity: 0.6;   /* más oscuro que antes (era 0.9) */
+  pointer-events: none;
+}
+
+/* Patrón de puntos sutil (consistente con .work) */
+.home::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px);
+  background-size: 6px 6px;
+  pointer-events: none;
 }
 
 .hero {
@@ -279,41 +375,50 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse at 50% 38%, #17171b 0%, rgba(10, 10, 10, 0) 70%),
-    radial-gradient(rgba(255, 255, 255, 0.045) 0.6px, transparent 0.8px) 0 0 / 6px 6px,
-    var(--bg);
+  background: var(--bg); /* base #0a0a0a */
+  isolation: isolate;    /* para que el blur del pseudo-elemento no se escape */
 }
 
-/* Titular grande detrás de las tarjetas */
-.work__title {
+/* Fondo: gradiente radial difuminado (afuera oscuro → centro brillante)
+   Paleta: #071B3A → #0A2D5E → #10447F → #145DA8 → #1678D2 → #168FE5 → #20A6F0 → #36B9F5 → #54CCFA → #75DCFF
+   ::before se blurea para que no se note el cambio entre colores */
+.work::before {
+  content: '';
+  position: absolute;
+  inset: -40%;           /* más grande que la sección para que el blur no corte en bordes */
+  z-index: -1;
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      #75DCFF 0%,        /* centro: más brillante */
+      #54CCFA 11%,
+      #36B9F5 22%,
+      #20A6F0 33%,
+      #168FE5 44%,
+      #1678D2 55%,
+      #145DA8 66%,
+      #10447F 77%,
+      #0A2D5E 88%,
+      #071B3A 100%       /* bordes: tono oscuro predominante */
+    );
+  filter: blur(120px);   /* difumina las transiciones entre paradas */
+  opacity: 0.7;   /* más oscuro que antes (era 0.95) */
+  pointer-events: none;
+}
+
+/* Patrón de puntos sutil encima del gradiente (opcional, da textura) */
+.work::after {
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  font-size: clamp(3rem, 13vw, 12rem);
-  font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.055em;
-  text-align: center;
-  color: var(--fg);
+  z-index: -1;
+  background-image:
+    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px);
+  background-size: 6px 6px;
   pointer-events: none;
-  user-select: none;
 }
 
-/* En el celular el titular va arriba, para que no lo tape la tarjeta central */
-@media (max-width: 600px) {
-  .work__title {
-    justify-content: flex-start;
-    padding-top: clamp(56px, 11vh, 110px);
-    font-size: 15vw;
-  }
-}
-
+/* El canvas del carrete queda encima (z-index: 1 por defecto) */
 .work__canvas {
   position: absolute;
   inset: 0;
@@ -321,7 +426,7 @@ body {
   width: 100%;
   height: 100%;
   cursor: grab;
-  touch-action: pan-y; /* el scroll vertical de la página sigue funcionando en el celular */
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
   outline: none;
@@ -362,12 +467,6 @@ body {
   align-items: center;
   gap: 2.5rem;
   padding: clamp(48px, 10vh, 96px) clamp(20px, 6vw, 80px);
-}
-
-.work.is-fallback .work__title {
-  position: static;
-  inset: auto;
-  font-size: clamp(2.25rem, 8vw, 5.5rem);
 }
 
 .work__grid {
@@ -417,4 +516,298 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: #5c5c59;
+}
+
+/* ==========================================================================
+   Botón de contacto (fly-through arrow)
+   ========================================================================== */
+.contact-btn {
+  position: absolute;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 0.75rem 1.25rem;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.contact-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.contact-btn:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 3px;
+}
+
+/* Ventanas recortadas para icono delantero y flecha trasera */
+.contact-btn__leading,
+.contact-btn__trailing {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* Ancho fijo = tamaño del icono (18px) + pequeño gap interno */
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.contact-btn__leading {
+  /* Ventana colapsada inicialmente (ancho 0) */
+  width: 0;
+  margin-right: 0;
+}
+
+.contact-btn__trailing {
+  margin-left: 0.5rem;
+}
+
+/* Iconos centrados verticalmente */
+.contact-btn__icon,
+.contact-btn__arrow {
+  display: block;
+  width: 18px;
+  height: 18px;
+  color: inherit;
+  flex-shrink: 0;
+  /* Posicionamiento para la animación de deslizamiento */
+  position: relative;
+  transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Etiqueta centrada */
+.contact-btn__label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Animación fly-through al hover */
+.contact-btn:hover .contact-btn__leading,
+.contact-btn:focus-visible .contact-btn__leading {
+  width: 22px;
+  margin-right: 0.5rem;
+}
+
+.contact-btn:hover .contact-btn__trailing,
+.contact-btn:focus-visible .contact-btn__trailing {
+  width: 0;
+  margin-left: 0;
+}
+
+/* Flecha sale por la derecha */
+.contact-btn:hover .contact-btn__arrow,
+.contact-btn:focus-visible .contact-btn__arrow {
+  transform: translateX(30px);
+}
+
+/* Icono entra por la izquierda */
+.contact-btn:hover .contact-btn__icon,
+.contact-btn:focus-visible .contact-btn__icon {
+  transform: translateX(0);
+}
+
+/* Estado inicial: icono escondido a la izquierda de su ventana */
+.contact-btn .contact-btn__icon {
+  transform: translateX(-30px);
+}
+
+/* Reduced motion: sin animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .contact-btn__leading,
+  .contact-btn__trailing,
+  .contact-btn__icon,
+  .contact-btn__arrow {
+    transition: none;
+  }
+  .contact-btn:hover .contact-btn__leading,
+  .contact-btn:focus-visible .contact-btn__leading {
+    width: 22px;
+    margin-right: 0.5rem;
+  }
+  .contact-btn:hover .contact-btn__trailing,
+  .contact-btn:focus-visible .contact-btn__trailing {
+    width: 0;
+    margin-left: 0;
+  }
+  .contact-btn .contact-btn__icon {
+    transform: none;
+  }
+  .contact-btn:hover .contact-btn__arrow,
+  .contact-btn:focus-visible .contact-btn__arrow {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Modal de contacto (dialog nativo)
+   ========================================================================== */
+.contact-dialog {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+.contact-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  animation: fade-in 200ms var(--ease);
+}
+
+.contact-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+}
+
+.contact-dialog__panel {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin: auto;
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  animation: slide-up 300ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.contact-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.contact-dialog__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.contact-dialog__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.contact-dialog__close:hover {
+  color: var(--fg);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.contact-dialog__close:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.contact-dialog__list {
+  margin: 0;
+  padding: 0.5rem;
+  list-style: none;
+}
+
+.contact-dialog__item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  width: 100%;
+  padding: 0.875rem 1rem;
+  color: var(--fg);
+  text-decoration: none;
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+
+.contact-dialog__item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.contact-dialog__item:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.contact-dialog__item-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.contact-dialog__item:hover .contact-dialog__item-icon {
+  color: var(--fg);
+}
+
+.contact-dialog__item span {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Ajuste para móviles */
+@media (max-width: 480px) {
+  .contact-btn {
+    right: 12px;
+    bottom: 12px;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+  }
+  .contact-btn__leading,
+  .contact-btn__trailing {
+    width: 20px;
+  }
+  .contact-btn:hover .contact-btn__leading,
+  .contact-btn:focus-visible .contact-btn__leading {
+    width: 20px;
+  }
 }

@@ -64,10 +64,26 @@
     return strokes;
   }
 
+  // Construye el logo estático en la esquina superior izquierda
+  function buildStaticLogo(data) {
+    var svg = document.querySelector('.site-logo__svg');
+    if (!svg) return;
+    svg.setAttribute('viewBox', data.viewBox);
+
+    var fill = svgEl('path', {
+      'class': 'logo-fill',
+      d: data.paths.map(function (p) { return p.d; }).join('')
+    });
+    svg.appendChild(fill);
+  }
+
   function start() {
     try {
       var data = window.LOGO_DATA;
       if (!data || !data.paths || !data.paths.length) throw new Error('Sin datos del logo');
+
+      // Logo estático en esquina superior izquierda (se dibuja una sola vez, sin animación)
+      buildStaticLogo(data);
 
       var strokes = buildDrawing(data);
 
