@@ -358,35 +358,96 @@ body {
 }
 
 /* ==========================================================================
-   Inicio (portada): mensaje centrado + personaje acostado abajo a la derecha
+   Inicio (portada): cielo estrellado + mensaje centrado + personaje abajo a la derecha
    ========================================================================== */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../assets/fonts/instrument-serif-regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../assets/fonts/instrument-serif-italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 .home {
-  /* el fondo viene del <main> (ver #inicio) */
+  /* el fondo azul viene del <main> (ver #inicio) */
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;          /* el mensaje queda en el centro exacto de la pantalla */
   min-height: 100vh;
   min-height: 100dvh;
-  /* arriba se deja lugar para el header fijo */
-  padding: clamp(96px, 14vh, 140px) clamp(20px, 6vw, 80px) clamp(40px, 6vh, 80px);
+  padding: 0 clamp(20px, 6vw, 80px);
   overflow: hidden;
   outline: none;
 }
 
-.home__message {
+/* Cielo: ocupa toda la portada, también por debajo de la cabecera transparente.
+   Se desvanece hacia abajo para no cortarse en seco contra la sección siguiente. */
+.home__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+}
+
+.home__content {
   position: relative;
   z-index: 2;
-  max-width: 32ch;
-  margin: 0;
-  font-size: clamp(1.4rem, 0.9rem + 1.7vw, 2.1rem);
-  font-weight: 500;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+/* Destello de cuatro puntas sobre el texto */
+.home__ornament {
+  width: clamp(18px, 1.7vw, 26px);
+  margin-bottom: clamp(1rem, 2.4vw, 1.75rem);
+  color: #ffe7ad;
+}
+
+.home__ornament svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(255, 214, 130, 0.75));
+  animation: ornament-pulse 4.5s ease-in-out infinite;
+}
+
+@keyframes ornament-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.95; }
+  50%      { transform: scale(0.82) rotate(8deg); opacity: 0.6; }
+}
+
+.home__message {
+  max-width: 15em;
+  margin: 0;
+  font-family: "Instrument Serif", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 1rem + 3.4vw, 4.25rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.012em;
+  color: #f6f3ec;
   text-wrap: balance;
-  color: #fff;
-  text-shadow: 0 2px 24px rgba(3, 14, 42, 0.45);
+  text-shadow: 0 2px 40px rgba(3, 14, 42, 0.6);
+}
+
+/* La frase importante en cursiva y con el tono cálido de las estrellas */
+.home__message em {
+  font-style: italic;
+  color: #ffe7ad;
+  text-shadow: 0 0 32px rgba(255, 205, 110, 0.38), 0 2px 40px rgba(3, 14, 42, 0.6);
 }
 
 /* Personaje: pegado a la esquina inferior derecha. El piso se desvanece hacia la izquierda. */
@@ -406,16 +467,39 @@ body {
   height: auto;
 }
 
-/* Aparecen con un fundido suave cuando termina la intro */
+/* Aparecen con un fundido suave cuando termina la intro: primero el cielo, después el texto */
+.js .home__sky,
+.js .home__ornament,
 .js .home__message,
 .js .home__character img {
   opacity: 0;
-  transition: opacity 900ms var(--ease) 150ms;
 }
 
-.is-ready .home__message,
+.js .home__message {
+  transform: translateY(18px);
+  filter: blur(8px);
+}
+
+.is-ready .home__sky {
+  opacity: 1;
+  transition: opacity 2200ms var(--ease);
+}
+
+.is-ready .home__ornament {
+  opacity: 1;
+  transition: opacity 1000ms var(--ease) 250ms;
+}
+
+.is-ready .home__message {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 1300ms var(--ease) 450ms, transform 1300ms var(--ease) 450ms, filter 1300ms var(--ease) 450ms;
+}
+
 .is-ready .home__character img {
   opacity: 1;
+  transition: opacity 1400ms var(--ease) 700ms;
 }
 
 @media (max-width: 860px) {
@@ -433,9 +517,20 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .home__message,
-  .js .home__character img {
+  .js .home__message {
+    transform: none;
+    filter: none;
+  }
+
+  .is-ready .home__sky,
+  .is-ready .home__ornament,
+  .is-ready .home__message,
+  .is-ready .home__character img {
     transition: none;
+  }
+
+  .home__ornament svg {
+    animation: none;
   }
 }
 

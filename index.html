@@ -84,9 +84,17 @@
   <main id="inicio" tabindex="-1">
 
     <section class="home" aria-labelledby="titulo-inicio">
+      <!-- Cielo estrellado (js/starfield.js). Llega hasta arriba de todo: la cabecera es transparente. -->
+      <canvas class="home__sky" id="sky" aria-hidden="true"></canvas>
+
       <h1 class="sr-only" id="titulo-inicio">Facundo Cabrera — Estudiante de programación</h1>
 
-      <p class="home__message" data-i18n="home.message">Si tenés una idea en mente o querés que trabajemos juntos, me encantará escucharte.</p>
+      <div class="home__content">
+        <div class="home__ornament" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M12 0c.7 6.4 4.6 10.3 12 12-7.4 1.7-11.3 5.6-12 12-.7-6.4-4.6-10.3-12-12C7.4 10.3 11.3 6.4 12 0z"/></svg>
+        </div>
+        <p class="home__message" data-i18n="home.message">Si tenés una idea en mente o querés que <em>trabajemos juntos</em>, me encantará escucharte.</p>
+      </div>
 
       <!-- Personaje acostado mirando las estrellas: recorte con transparencia, abajo a la derecha -->
       <figure class="home__character">
@@ -130,6 +138,7 @@
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
+  <script src="js/starfield.js"></script>
   <script src="js/projects-data.js"></script>
   <script src="js/projects-reel.js"></script>
   <script src="js/site-header.js"></script>

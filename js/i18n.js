@@ -13,7 +13,7 @@
         contact: 'Contacto'
       },
       home: {
-        message: 'Si tenés una idea en mente o querés que trabajemos juntos, me encantará escucharte.'
+        message: 'Si tenés una idea en mente o querés que <em>trabajemos juntos</em>, me encantará escucharte.'
       },
       meta: {
         description: 'Portafolio de Facundo Cabrera, estudiante de programación.'
@@ -48,7 +48,7 @@
         contact: 'Contact'
       },
       home: {
-        message: 'If you have an idea in mind or want us to work together, I\'d love to hear from you.'
+        message: 'If you have an idea in mind or want us to <em>work together</em>, I\'d love to hear from you.'
       },
       meta: {
         description: 'Portfolio of Facundo Cabrera, programming student.'
@@ -94,12 +94,8 @@
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
       var text = translate(key, lang);
-      // Si el elemento tiene hijos que no son solo texto, usar innerHTML
-      if (el.children.length === 0) {
-        el.innerHTML = text;
-      } else {
-        el.textContent = text;
-      }
+      // Las traducciones son texto propio del sitio (a veces con <em>/<strong>), por eso innerHTML
+      el.innerHTML = text;
     });
 
     // Actualizar meta description
