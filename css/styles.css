@@ -954,12 +954,54 @@ html.light-mode .site-header .site-header__icon--moon {
   display: block;
 }
 
-/* Ícono de sonido / muted */
-.site-header__btn--sound[aria-pressed="true"] .site-header__icon--muted {
-  display: block;
+/* Ícono de sonido: un solo SVG que se transforma entre "sonido" y "silenciado".
+   aria-pressed="true"  -> sonido activado: se ven las ondas.
+   aria-pressed="false" -> silenciado: las ondas se apagan y la X se dibuja. */
+.site-header__btn--sound:active {
+  transform: scale(0.92);
 }
-.site-header__btn--sound[aria-pressed="true"] .site-header__icon:not(.site-header__icon--muted) {
-  display: none;
+
+.site-header__icon--sound .sound-wave {
+  transform-box: fill-box;
+  transform-origin: left center;
+  transition: opacity 0.22s var(--ease), transform 0.3s var(--ease);
+}
+
+.site-header__icon--sound .sound-x line {
+  stroke-dasharray: 1;
+  transition: stroke-dashoffset 0.24s var(--ease);
+}
+
+/* Sonido activado: la X se borra rápido y las ondas aparecen una tras otra */
+.site-header__btn--sound[aria-pressed="true"] .sound-x line {
+  stroke-dashoffset: 1;
+}
+.site-header__btn--sound[aria-pressed="true"] .sound-wave {
+  opacity: 1;
+  transform: none;
+}
+.site-header__btn--sound[aria-pressed="true"] .sound-wave-1 { transition-delay: 0.10s; }
+.site-header__btn--sound[aria-pressed="true"] .sound-wave-2 { transition-delay: 0.20s; }
+
+/* Silenciado: las ondas se apagan (la más lejana primero) y después se dibuja la X */
+.site-header__btn--sound[aria-pressed="false"] .sound-x line {
+  stroke-dashoffset: 0;
+}
+.site-header__btn--sound[aria-pressed="false"] .sound-x-1 { transition-delay: 0.12s; }
+.site-header__btn--sound[aria-pressed="false"] .sound-x-2 { transition-delay: 0.20s; }
+.site-header__btn--sound[aria-pressed="false"] .sound-wave {
+  opacity: 0;
+  transform: translateX(-4px) scale(0.6);
+}
+.site-header__btn--sound[aria-pressed="false"] .sound-wave-2 { transition-delay: 0s; }
+.site-header__btn--sound[aria-pressed="false"] .sound-wave-1 { transition-delay: 0.06s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header__icon--sound .sound-wave,
+  .site-header__icon--sound .sound-x line {
+    transition: none;
+    transition-delay: 0s;
+  }
 }
 
 @media (max-width: 860px) {

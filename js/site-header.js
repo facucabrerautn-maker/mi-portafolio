@@ -45,12 +45,14 @@
     });
   }
 
-  /* ---------- Sound Toggle (placeholder) ---------- */
+  /* ---------- Sound Toggle (placeholder) ----------
+   aria-pressed="true" = sonido activado; el ícono se anima solo desde CSS. */
   var soundBtn = document.querySelector('[data-sound-btn]');
   var SOUND_KEY = 'site-sound-enabled';
 
   function initSound() {
-    var enabled = localStorage.getItem(SOUND_KEY) !== 'false'; // default true
+    // Por defecto silenciado: todavía no hay sonidos y los navegadores exigen un gesto del usuario para reproducir
+    var enabled = localStorage.getItem(SOUND_KEY) === 'true';
     soundBtn.setAttribute('aria-pressed', enabled.toString());
 
     soundBtn.addEventListener('click', function () {
