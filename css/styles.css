@@ -605,7 +605,10 @@ body {
    Modal de contacto (dialog nativo)
    ========================================================================== */
 .contact-dialog {
-  margin: 0;
+  /* El <dialog> nativo se centra solo con margin:auto (no hay que pisarlo con margin:0,
+     porque lo manda a la esquina). El ancho se fija acá para que el panel no se encoja. */
+  width: min(360px, calc(100vw - 32px));
+  margin: auto;
   padding: 0;
   border: none;
   background: transparent;
@@ -628,8 +631,6 @@ body {
 .contact-dialog__panel {
   position: relative;
   width: 100%;
-  max-width: 360px;
-  margin: auto;
   background: var(--bg);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
