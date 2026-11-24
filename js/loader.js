@@ -64,17 +64,29 @@
     return strokes;
   }
 
-  // Construye el logo estático en la esquina superior izquierda
+  // Construye el logo estático en la esquina superior izquierda (legacy) y en el header
   function buildStaticLogo(data) {
-    var svg = document.querySelector('.site-logo__svg');
-    if (!svg) return;
-    svg.setAttribute('viewBox', data.viewBox);
+    // Logo legacy (por compatibilidad)
+    var svgLegacy = document.querySelector('.site-logo__svg');
+    if (svgLegacy) {
+      svgLegacy.setAttribute('viewBox', data.viewBox);
+      var fillLegacy = svgEl('path', {
+        'class': 'logo-fill',
+        d: data.paths.map(function (p) { return p.d; }).join('')
+      });
+      svgLegacy.appendChild(fillLegacy);
+    }
 
-    var fill = svgEl('path', {
-      'class': 'logo-fill',
-      d: data.paths.map(function (p) { return p.d; }).join('')
-    });
-    svg.appendChild(fill);
+    // Logo en el header (nuevo)
+    var svgHeader = document.querySelector('.site-header__logo');
+    if (svgHeader) {
+      svgHeader.setAttribute('viewBox', data.viewBox);
+      var fillHeader = svgEl('path', {
+        'class': 'logo-fill',
+        d: data.paths.map(function (p) { return p.d; }).join('')
+      });
+      svgHeader.appendChild(fillHeader);
+    }
   }
 
   function start() {
