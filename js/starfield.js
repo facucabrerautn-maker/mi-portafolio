@@ -1,10 +1,11 @@
 /* ==========================================================================
-   Cielo estrellado de la portada (canvas 2D, sin librerías).
+   Cielo estrellado CONTINUO: cubre portada + proyectos (canvas 2D, sin librerías).
+   - Un único canvas en #inicio (main) que abarca ambas secciones.
    - Estrellas de tres tipos: puntitos, puntos con brillo y unas pocas con forma
      de estrella de cinco puntas (como las de la ilustración del personaje).
    - Titilan suavemente; de vez en cuando cruza una estrella fugaz.
-   - Cerca del texto central las estrellas se atenúan para no pelear con él.
-   - Se pausa cuando la portada no se ve o la pestaña está en segundo plano.
+   - Cerca del texto central (portada) las estrellas se atenúan para no pelear con él.
+   - Se pausa cuando #inicio no se ve o la pestaña está en segundo plano.
    - Con "reducir movimiento" se dibuja un cuadro fijo, sin animación.
    ========================================================================== */
 (function () {
@@ -12,9 +13,10 @@
 
   var canvas = document.getElementById('sky');
   if (!canvas || !canvas.getContext) return;
+  // Host = <main> padre del canvas (funciona en index.html, sobre-mi.html, stack.html, contacto.html)
   var host = canvas.parentElement;
   var ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  if (!ctx || !host) return;
 
   var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
@@ -80,11 +82,11 @@
   /* Zona del texto central: rectángulo real del bloque de texto (en px, relativo a la portada).
      textShade devuelve 1 dentro del bloque y baja a 0 a ~PAD px de distancia. */
   var PAD = 70;
-  var HEADER_BAND = 110;           // franja de la cabecera: sin estrellas grandes para no tapar el logo ni el menú
+  // var HEADER_BAND = 110;  // ya no necesario: las estrellas cubren todo #inicio
   var zone = null;
 
   function measureZone() {
-    var content = host.querySelector('.home__content');
+    var content = document.querySelector('.home__content');
     if (!content) { zone = null; return; }
     var hr = host.getBoundingClientRect(), cr = content.getBoundingClientRect();
     zone = { x0: cr.left - hr.left, y0: cr.top - hr.top, x1: cr.right - hr.left, y1: cr.bottom - hr.top };
@@ -98,12 +100,12 @@
     return clamp(1 - Math.sqrt(dx * dx + dy * dy) / PAD, 0, 1);
   }
 
-  /* Las estrellas grandes con forma de estrella nunca se ubican sobre el texto */
+  /* Las estrellas grandes con forma de estrella nunca se ubican sobre el texto de la portada */
   function keepBigStarsClear() {
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
       if (s.kind !== 2) continue;
-      for (var tries = 0; tries < 60 && (textShade(s.x, s.y) > 0 || s.y * h < HEADER_BAND); tries++) {
+      for (var tries = 0; tries < 60 && textShade(s.x, s.y) > 0; tries++) {
         s.x = Math.random(); s.y = Math.random();
       }
     }
@@ -164,7 +166,7 @@
     var ang = rand(0.42, 0.62);                       // bajada suave
     shooting = {
       x: fromLeft ? rand(0.05, 0.4) * w : rand(0.6, 0.95) * w,
-      y: rand(0.04, 0.3) * h,
+      y: rand(0.05, 0.95) * h,                        // puede aparecer en cualquier altura de #inicio
       dir: fromLeft ? 1 : -1,
       ang: ang,
       len: rand(110, 190),

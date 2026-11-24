@@ -20,6 +20,7 @@
       },
       about: {
         title: 'Sobre mí',
+        content: '<p>Soy Facundo, estudiante de programación apasionado por crear experiencias digitales que sean funcionales, bonitas y accesibles.</p><p>Me gusta entender cómo funcionan las cosas por dentro: desde el navegador hasta el servidor, pasando por la base de datos. Disfruto escribir código limpio, bien estructurado y que otros puedan leer y mantener.</p><p>Cuando no estoy programando, me encontrarás aprendiendo algo nuevo, jugando videojuegos o tomando mate.</p>',
         p1: 'Soy Facundo, estudiante de programación apasionado por crear experiencias digitales que sean funcionales, bonitas y accesibles.',
         p2: 'Me gusta entender cómo funcionan las cosas por dentro: desde el navegador hasta el servidor, pasando por la base de datos. Disfruto escribir código limpio, bien estructurado y que otros puedan leer y mantener.',
         p3: 'Cuando no estoy programando, me encontrarás aprendiendo algo nuevo, jugando videojuegos o tomando mate.'
@@ -38,6 +39,10 @@
       },
       lang: {
         current: 'ES'
+      },
+      footer: {
+        made: 'Hecho por Facu',
+        rights: 'Todos los derechos reservados'
       }
     },
     en: {
@@ -55,6 +60,7 @@
       },
       about: {
         title: 'About me',
+        content: '<p>I\'m Facundo, a programming student passionate about creating digital experiences that are functional, beautiful, and accessible.</p><p>I like understanding how things work under the hood: from the browser to the server, through the database. I enjoy writing clean, well-structured code that others can read and maintain.</p><p>When I\'m not coding, you\'ll find me learning something new, playing video games, or drinking mate.</p>',
         p1: 'I\'m Facundo, a programming student passionate about creating digital experiences that are functional, beautiful, and accessible.',
         p2: 'I like understanding how things work under the hood: from the browser to the server, through the database. I enjoy writing clean, well-structured code that others can read and maintain.',
         p3: 'When I\'m not coding, you\'ll find me learning something new, playing video games, or drinking mate.'
@@ -73,6 +79,10 @@
       },
       lang: {
         current: 'EN'
+      },
+      footer: {
+        made: 'Made by Facu',
+        rights: 'All rights reserved'
       }
     }
   };

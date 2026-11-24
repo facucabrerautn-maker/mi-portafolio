@@ -33,9 +33,9 @@
       <nav class="site-header__nav" aria-label="Navegación principal">
         <ul class="site-header__list" role="list">
           <li><a class="site-header__link" href="#proyectos" data-i18n="nav.projects">Proyectos</a></li>
-          <li><a class="site-header__link" href="#sobre-mi" data-i18n="nav.about">Sobre mí</a></li>
-          <li><a class="site-header__link" href="#stack" data-i18n="nav.stack">Stack</a></li>
-          <li><a class="site-header__link" href="#contacto" data-i18n="nav.contact">Contacto</a></li>
+          <li><a class="site-header__link" href="sobre-mi.html" data-i18n="nav.about">Sobre mí</a></li>
+          <li><a class="site-header__link" href="stack.html" data-i18n="nav.stack">Stack</a></li>
+          <li><a class="site-header__link" href="contacto.html" data-i18n="nav.contact">Contacto</a></li>
         </ul>
       </nav>
 
@@ -83,9 +83,10 @@
 
   <main id="inicio" tabindex="-1">
 
+    <!-- Cielo estrellado continuo: cubre portada + proyectos (js/starfield.js) -->
+    <canvas class="site-sky" id="sky" aria-hidden="true"></canvas>
+
     <section class="home" aria-labelledby="titulo-inicio">
-      <!-- Cielo estrellado (js/starfield.js). Llega hasta arriba de todo: la cabecera es transparente. -->
-      <canvas class="home__sky" id="sky" aria-hidden="true"></canvas>
 
       <h1 class="sr-only" id="titulo-inicio">Facundo Cabrera — Estudiante de programación</h1>
 
@@ -103,29 +104,6 @@
       </figure>
     </section>
 
-    <!-- Sobre mí -->
-    <section class="about" id="sobre-mi" aria-labelledby="about-title">
-      <div class="about__inner">
-        <h2 id="about-title" class="about__title" data-i18n="about.title">Sobre mí</h2>
-        <div class="about__content">
-          <p class="about__text" data-i18n="about.p1">Soy Facundo, estudiante de programación apasionado por crear experiencias digitales que sean funcionales, bonitas y accesibles.</p>
-          <p class="about__text" data-i18n="about.p2">Me gusta entender cómo funcionan las cosas por dentro: desde el navegador hasta el servidor, pasando por la base de datos. Disfruto escribir código limpio, bien estructurado y que otros puedan leer y mantener.</p>
-          <p class="about__text" data-i18n="about.p3">Cuando no estoy programando, me encontrarás aprendiendo algo nuevo, jugando videojuegos o tomando mate.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Stack / Habilidades -->
-    <section class="stack" id="stack" aria-labelledby="stack-title">
-      <div class="stack__inner">
-        <h2 id="stack-title" class="stack__title" data-i18n="stack.title">Stack tecnológico</h2>
-        <p class="stack__subtitle" data-i18n="stack.subtitle">Herramientas y tecnologías que uso habitualmente</p>
-        <div class="stack__categories" role="list" aria-label="Categorías de tecnologías">
-          <!-- Se llena dinámicamente desde js/stack-data.js -->
-        </div>
-      </div>
-    </section>
-
     <!-- Proyectos: carrete 3D. Los proyectos se editan en js/projects-data.js -->
     <section class="work" id="proyectos" aria-label="Proyectos">
       <canvas class="work__canvas" id="reel" tabindex="0" role="group" aria-label="Carrete de proyectos"></canvas>
@@ -133,6 +111,23 @@
       <p class="work__hint" id="reel-hint">Arrastrá para explorar</p>
       <p class="sr-only" id="reel-live" aria-live="polite"></p>
     </section>
+
+    <!-- Footer genérico con navegación -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer__inner">
+        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+          <ul class="site-footer__list" role="list">
+            <li><a class="site-footer__link" href="#proyectos" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a class="site-footer__link" href="sobre-mi.html" data-i18n="nav.about">Sobre mí</a></li>
+            <li><a class="site-footer__link" href="stack.html" data-i18n="nav.stack">Stack</a></li>
+            <li><a class="site-footer__link" href="contacto.html" data-i18n="nav.contact">Contacto</a></li>
+          </ul>
+        </nav>
+        <p class="site-footer__copy" aria-hidden="true">
+          <span data-i18n="footer.made">Hecho por Facu</span> · <span data-i18n="footer.rights">Todos los derechos reservados</span>
+        </p>
+      </div>
+    </footer>
 
   </main>
 
@@ -142,8 +137,6 @@
   <script src="js/projects-data.js"></script>
   <script src="js/projects-reel.js"></script>
   <script src="js/site-header.js"></script>
-  <script src="js/stack-data.js"></script>
-  <script src="js/stack-renderer.js"></script>
   <script src="js/i18n.js"></script>
 </body>
 </html>

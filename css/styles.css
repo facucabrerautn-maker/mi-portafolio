@@ -43,7 +43,7 @@ html.light-mode .work {
       rgba(240, 245, 255, 0) calc(100% - 100vh + 120px)
     ),
     radial-gradient(
-      ellipse 85% 60% at 50% 50%,
+      ellipse 85% 60% at 50% 30%,           /* centro en la portada, no en la costura */
       #d6f4ff 0%,
       #a8e8ff 11%,
       #7ad6ff 22%,
@@ -77,14 +77,11 @@ html {
 }
 
 /* Fondo unificado: UN solo gradiente continuo detrás de Inicio y Proyectos.
-   Va sobre todo el <main> (y no sobre cada sección) para que no haya costura entre ambas,
-   y sin elementos más grandes que la pantalla ni filtros de blur, así no genera scroll lateral.
+   Va sobre todo el <main> (y no sobre cada sección) para que no haya costura entre ambas.
    Paleta: #071B3A (bordes, oscuro) → #75DCFF (centro, brillante).
-   Para ajustarlo: el 0.35 de la capa "oscurece" controla qué tan oscuro es el conjunto, y
-   "85% 60%" controla el tamaño del brillo central (ancho y alto).
-   La capa "portada" oscurece SOLO la zona de la portada, para que el texto blanco se lea bien
-   (contraste mínimo 4,5:1) sin importar cuánto mida la portada: se calcula desde abajo
-   (la sección Proyectos mide 100vh) y se desvanece justo antes de ella. El 0.5 es su intensidad. */
+   El centro del radial está en la portada (50% 30% de #inicio), NO en la costura,
+   así la sección de proyectos no se ve más clara que la portada.
+   La capa "portada" oscurece SOLO la zona de la portada para contraste del texto. */
 #inicio {
   position: relative;
   outline: none;
@@ -96,9 +93,9 @@ html {
       rgba(3, 14, 42, 0.5) calc(100% - 100vh - 20px),
       rgba(3, 14, 42, 0) calc(100% - 100vh + 120px)
     ),
-    linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece */
+    linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece global */
     radial-gradient(
-      ellipse 85% 60% at 50% 50%,
+      ellipse 85% 60% at 50% 30%,           /* centro en la portada, no en la costura */
       #75DCFF 0%,
       #54CCFA 11%,
       #36B9F5 22%,
@@ -384,21 +381,21 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0 clamp(20px, 6vw, 80px);
-  overflow: hidden;
+  /* overflow: hidden eliminado: la máscara del canvas (.home__sky) ya hace el fade suave.
+     Así el fondo degradado de #inicio se ve continuo sin corte brusco. */
   outline: none;
 }
 
-/* Cielo: ocupa toda la portada, también por debajo de la cabecera transparente.
-   Se desvanece hacia abajo para no cortarse en seco contra la sección siguiente. */
-.home__sky {
+/* Cielo estrellado continuo: cubre TODO el #inicio (portada + proyectos).
+   Va en el main, no en .home, para que sea un fondo único sin costuras. */
+.site-sky {
   position: absolute;
   inset: 0;
   z-index: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+  /* Sin máscara: las estrellas siguen hasta el final de la página */
 }
 
 .home__content {
@@ -450,7 +447,8 @@ body {
   text-shadow: 0 0 32px rgba(255, 205, 110, 0.38), 0 2px 40px rgba(3, 14, 42, 0.6);
 }
 
-/* Personaje: pegado a la esquina inferior derecha. El piso se desvanece hacia la izquierda. */
+/* Personaje: pegado a la esquina inferior derecha.
+   Fade sutil SOLO en el borde izquierdo (césped→cielo), personaje 100% visible. */
 .home__character {
   position: absolute;
   right: 0;
@@ -459,6 +457,9 @@ body {
   width: min(62vw, 880px);
   margin: 0;
   pointer-events: none;
+  /* Máscara: fade horizontal suave en el 25% izquierdo; resto 100% opaco */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 25%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 25%, #000 100%);
 }
 
 .home__character img {
@@ -531,49 +532,6 @@ body {
 
   .home__ornament svg {
     animation: none;
-  }
-}
-
-/* ==========================================================================
-   About / Sobre mí
-   ========================================================================== */
-.about {
-  position: relative;
-  padding: clamp(80px, 12vh, 120px) clamp(20px, 6vw, 80px);
-  background: transparent;
-}
-
-.about__inner {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-.about__title {
-  margin: 0 0 1.5rem;
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-align: center;
-}
-
-.about__content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.about__text {
-  margin: 0;
-  font-size: clamp(1rem, 1.1vw, 1.125rem);
-  line-height: 1.8;
-  color: var(--fg);
-  text-align: center;
-}
-
-@media (max-width: 600px) {
-  .about {
-    padding: clamp(60px, 10vh, 96px) clamp(16px, 5vw, 32px);
   }
 }
 
@@ -690,17 +648,21 @@ body {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  overflow: hidden;
-  /* el fondo viene del <main> (ver #inicio) */
+  padding-top: clamp(80px, 12vh, 120px);  /* espacio para header fijo */
+  scroll-margin-top: clamp(80px, 12vh, 120px);  /* offset para anclas: header fijo */
+  /* overflow: hidden eliminado: el canvas ya es position:absolute inset:0,
+     y el fondo degradado continuo viene de #inicio (main). Así no hay corte. */
 }
 
-/* El canvas del carrete queda encima (z-index: 1 por defecto) */
+/* El canvas del carrete queda encima (z-index: 1 por defecto).
+   Fondo transparente obligatorio para que se vea el cielo estrellado (.site-sky, z-index: 0) de fondo. */
 .work__canvas {
   position: absolute;
   inset: 0;
   z-index: 1;
   width: 100%;
   height: 100%;
+  background: transparent !important;  /* fuerza transparencia por si el clearColor falla */
   cursor: grab;
   touch-action: pan-y;
   user-select: none;
@@ -784,6 +746,279 @@ body {
   margin: 0.15rem 0 0;
   font-size: 0.875rem;
   color: var(--muted);
+}
+
+
+/* ==========================================================================
+   Páginas separadas: Sobre mí, Stack, Contacto
+   ========================================================================== */
+
+/* Base común para páginas interiores */
+.about-page,
+.stack-page,
+.contact-page {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(100px, 15vh, 160px) clamp(20px, 6vw, 80px) clamp(80px, 10vh, 120px);
+  background: transparent;  /* usa el fondo de main (estrellas + degradado) */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.about-page__inner,
+.stack-page__inner,
+.contact-page__inner {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* --- Sobre mí (página) --- */
+.about-page__header {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vh, 60px);
+}
+
+.about-page__title {
+  margin: 0 0 clamp(16px, 3vw, 24px);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.about-page__name {
+  margin: 0 0 clamp(60px, 10vh, 100px);
+  font-family: "Instrument Serif", "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--fg);
+  text-shadow: 0 4px 60px rgba(3, 14, 42, 0.5);
+}
+
+/* Espacio reservado para personaje futuro */
+.about-page__character-spacer {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  aspect-ratio: 4 / 3;
+  min-height: 280px;
+  max-height: 420px;
+  background:
+    radial-gradient(ellipse at center, rgba(117, 220, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50% 50% 0 0 / 60% 60% 0 0;
+  opacity: 0.5;
+}
+
+.about-page__character-spacer::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  border-radius: 2px;
+  opacity: 0.4;
+}
+
+.about-page__content {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.about-page__text-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-size: clamp(1rem, 1.1vw, 1.125rem);
+  line-height: 1.85;
+  color: var(--fg);
+  text-align: center;
+}
+
+.about-page__text-wrapper p {
+  margin: 0;
+}
+
+/* --- Stack (página) --- */
+.stack-page__header {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vh, 60px);
+}
+
+.stack-page__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.stack-page__subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  color: var(--muted);
+}
+
+.stack-page__categories {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+
+.stack-page__category {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stack-page__category-title {
+  margin: 0;
+  font-size: clamp(0.875rem, 1vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-align: center;
+}
+
+.stack-page__items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 1.5vw, 1.25rem);
+}
+
+.stack-page__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  font-size: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: all 0.2s var(--ease);
+  white-space: nowrap;
+}
+
+.stack-page__item:hover {
+  background: var(--card-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
+.stack-page__item svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* --- Contacto (página) --- */
+.contact-page__header {
+  text-align: center;
+  margin-bottom: clamp(40px, 6vh, 60px);
+}
+
+.contact-page__title {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+}
+
+.contact-page__subtitle {
+  margin: 0;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  color: var(--muted);
+}
+
+.contact-page__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.contact-page__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  font-size: clamp(1rem, 1.1vw, 1.125rem);
+  font-weight: 500;
+  color: var(--fg);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s var(--ease);
+}
+
+.contact-page__link:hover {
+  background: var(--card-hover);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px var(--shadow);
+}
+
+.contact-page__link svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+/* Responsive para páginas interiores */
+@media (max-width: 700px) {
+  .about-page,
+  .stack-page,
+  .contact-page {
+    padding: clamp(80px, 12vh, 100px) clamp(16px, 5vw, 32px) clamp(60px, 8vh, 80px);
+  }
+
+  .about-page__name {
+    margin-bottom: clamp(40px, 8vh, 60px);
+    font-size: clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .about-page__character-spacer {
+    min-height: 200px;
+    max-height: 300px;
+  }
+
+  .contact-page__link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-page__name {
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+}
+
+/* Light mode adjustments for interior pages */
+html.light-mode .about-page__character-spacer,
+html.light-mode .about-page__name {
+  text-shadow: 0 4px 60px rgba(0, 102, 204, 0.15);
 }
 
 
@@ -1060,5 +1295,100 @@ html.light-mode .site-header .site-header__icon--moon {
     text-align: center;
     padding: 0.75rem 0;
     font-size: clamp(1rem, 2vw, 1.125rem);
+  }
+}
+
+/* ==========================================================================
+   Site Footer (pie de página genérico con navegación)
+   ========================================================================== */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  padding: clamp(40px, 8vh, 60px) clamp(20px, 6vw, 80px);
+  border-top: 1px solid var(--border);
+  background: transparent;
+}
+
+.site-footer__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(24px, 4vw, 32px);
+  text-align: center;
+}
+
+.site-footer__nav {
+  width: 100%;
+}
+
+.site-footer__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 24px) clamp(12px, 2vw, 16px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: clamp(0.8125rem, 0.9vw, 0.9375rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s var(--ease);
+  position: relative;
+}
+
+.site-footer__link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--accent);
+  transition: width 0.2s var(--ease);
+}
+
+.site-footer__link:hover {
+  color: var(--accent);
+}
+
+.site-footer__link:hover::after {
+  width: 100%;
+}
+
+.site-footer__link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.site-footer__copy {
+  margin: 0;
+  font-size: clamp(0.75rem, 0.85vw, 0.8125rem);
+  color: var(--muted);
+  opacity: 0.8;
+}
+
+html.light-mode .site-footer__copy {
+  opacity: 0.7;
+}
+
+@media (max-width: 600px) {
+  .site-footer {
+    padding: clamp(32px, 6vh, 48px) clamp(16px, 5vw, 32px);
+  }
+
+  .site-footer__inner {
+    gap: clamp(20px, 3vw, 28px);
+  }
+
+  .site-footer__list {
+    gap: clamp(12px, 2.5vw, 16px) clamp(8px, 2vw, 12px);
   }
 }

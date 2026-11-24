@@ -8,7 +8,8 @@
 
   var body = document.body;
   var loader = document.getElementById('loader');
-  var main = document.getElementById('inicio');
+  // Buscar el <main> principal (funciona en index.html, sobre-mi.html, stack.html, contacto.html)
+  var main = document.querySelector('main');
   if (!loader || !main) return;
 
   var reduceMotion = window.matchMedia &&
