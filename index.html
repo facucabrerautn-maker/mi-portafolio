@@ -84,31 +84,23 @@
   <main id="inicio" tabindex="-1">
 
     <section class="home" aria-labelledby="titulo-inicio">
-      <div class="hero">
+      <!-- Cielo estrellado (js/starfield.js). Llega hasta arriba de todo: la cabecera es transparente. -->
+      <canvas class="home__sky" id="sky" aria-hidden="true"></canvas>
 
-        <div class="hero__side">
-          <div class="hero__intro">
-            <h1 class="hero__title" id="titulo-inicio">Facundo Cabrera</h1>
-            <p class="hero__role">Estudiante de programación</p>
-            <a class="hero__link" href="#proyectos" data-i18n="hero.cta">Ver proyectos</a>
-          </div>
+      <h1 class="sr-only" id="titulo-inicio">Facundo Cabrera — Estudiante de programación</h1>
 
-          <!-- Personaje: recorte de assets/personaje-facu.webp (PNG/WebP con fondo transparente) -->
-          <figure class="hero__character">
-            <img src="assets/personaje-facu.webp" width="883" height="1222" decoding="async"
-                 alt="Ilustración 3D de Facu sentado con las piernas cruzadas, con anteojos y remera negra, trabajando en su laptop">
-          </figure>
+      <div class="home__content">
+        <div class="home__ornament" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false"><path fill="currentColor" d="M12 0c.7 6.4 4.6 10.3 12 12-7.4 1.7-11.3 5.6-12 12-.7-6.4-4.6-10.3-12-12C7.4 10.3 11.3 6.4 12 0z"/></svg>
         </div>
-
-        <!-- TEXTO PROVISIONAL: reemplazalo por tu presentación -->
-        <div class="hero__about">
-          <p data-i18n="hero.p1">¡Hola! Soy Facundo y me gusta construir cosas. Soy estudiante de programación y disfruto de convertir ideas en sitios y aplicaciones que funcionan bien, se ven bien y son fáciles de usar.</p>
-          <p data-i18n="hero.p2">Actualmente estoy estudiando y desarrollando <strong>proyectos personales</strong> donde practico lo que voy aprendiendo. Me interesa entender cómo funcionan las cosas por dentro, cuidar los detalles y escribir código claro que otras personas puedan leer y mantener.</p>
-          <p data-i18n="hero.p3">Estoy abierto a <strong>nuevas oportunidades y a proyectos con clientes</strong>. Si tenés una idea en mente o querés que trabajemos juntos, escribime: me encantará escucharte.</p>
-          <p class="hero__note" data-i18n="hero.note">Sitio en construcción</p>
-        </div>
-
+        <p class="home__message" data-i18n="home.message">Si tenés una idea en mente o querés que <em>trabajemos juntos</em>, me encantará escucharte.</p>
       </div>
+
+      <!-- Personaje acostado mirando las estrellas: recorte con transparencia, abajo a la derecha -->
+      <figure class="home__character">
+        <img src="assets/personaje-acostado.webp" width="1195" height="339" decoding="async"
+             alt="Ilustración 3D de Facu acostado sobre el pasto, con anteojos y remera negra, mirando el cielo">
+      </figure>
     </section>
 
     <!-- Sobre mí -->
@@ -146,6 +138,7 @@
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
+  <script src="js/starfield.js"></script>
   <script src="js/projects-data.js"></script>
   <script src="js/projects-reel.js"></script>
   <script src="js/site-header.js"></script>

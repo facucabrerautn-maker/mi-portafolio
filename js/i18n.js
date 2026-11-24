@@ -12,12 +12,11 @@
         stack: 'Stack',
         contact: 'Contacto'
       },
-      hero: {
-        cta: 'Ver proyectos',
-        p1: '¡Hola! Soy Facundo y me gusta construir cosas. Soy estudiante de programación y disfruto de convertir ideas en sitios y aplicaciones que funcionan bien, se ven bien y son fáciles de usar.',
-        p2: 'Actualmente estoy estudiando y desarrollando <strong>proyectos personales</strong> donde practico lo que voy aprendiendo. Me interesa entender cómo funcionan las cosas por dentro, cuidar los detalles y escribir código claro que otras personas puedan leer y mantener.',
-        p3: 'Estoy abierto a <strong>nuevas oportunidades y a proyectos con clientes</strong>. Si tenés una idea en mente o querés que trabajemos juntos, escribime: me encantará escucharte.',
-        note: 'Sitio en construcción'
+      home: {
+        message: 'Si tenés una idea en mente o querés que <em>trabajemos juntos</em>, me encantará escucharte.'
+      },
+      meta: {
+        description: 'Portafolio de Facundo Cabrera, estudiante de programación.'
       },
       about: {
         title: 'Sobre mí',
@@ -48,12 +47,11 @@
         stack: 'Stack',
         contact: 'Contact'
       },
-      hero: {
-        cta: 'View projects',
-        p1: 'Hi! I\'m Facundo and I like building things. I\'m a programming student and I enjoy turning ideas into websites and applications that work well, look great, and are easy to use.',
-        p2: 'I\'m currently studying and developing <strong>personal projects</strong> where I practice what I\'m learning. I\'m interested in understanding how things work under the hood, caring about details, and writing clean code that others can read and maintain.',
-        p3: 'I\'m open to <strong>new opportunities and client projects</strong>. If you have an idea in mind or want to work together, write to me: I\'d love to hear from you.',
-        note: 'Site under construction'
+      home: {
+        message: 'If you have an idea in mind or want us to <em>work together</em>, I\'d love to hear from you.'
+      },
+      meta: {
+        description: 'Portfolio of Facundo Cabrera, programming student.'
       },
       about: {
         title: 'About me',
@@ -96,18 +94,14 @@
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var key = el.getAttribute('data-i18n');
       var text = translate(key, lang);
-      // Si el elemento tiene hijos que no son solo texto, usar innerHTML
-      if (el.children.length === 0 || key.includes('hero.p') || key.includes('about.p')) {
-        el.innerHTML = text;
-      } else {
-        el.textContent = text;
-      }
+      // Las traducciones son texto propio del sitio (a veces con <em>/<strong>), por eso innerHTML
+      el.innerHTML = text;
     });
 
     // Actualizar meta description
     var metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', translate('hero.p1', lang).replace(/<[^>]*>/g, '').slice(0, 160));
+      metaDesc.setAttribute('content', translate('meta.description', lang));
     }
   }
 

@@ -358,172 +358,180 @@ body {
 }
 
 /* ==========================================================================
-   Inicio (portada)
+   Inicio (portada): cielo estrellado + mensaje centrado + personaje abajo a la derecha
    ========================================================================== */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../assets/fonts/instrument-serif-regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../assets/fonts/instrument-serif-italic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 .home {
-  /* el fondo viene del <main> (ver #inicio) */
+  /* el fondo azul viene del <main> (ver #inicio) */
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  place-items: center;          /* el mensaje queda en el centro exacto de la pantalla */
   min-height: 100vh;
   min-height: 100dvh;
-  /* arriba se deja lugar para el header fijo */
-  padding: clamp(120px, 18vh, 180px) clamp(20px, 6vw, 80px) clamp(40px, 6vh, 80px);
+  padding: 0 clamp(20px, 6vw, 80px);
+  overflow: hidden;
   outline: none;
 }
 
-/* Dos columnas: nombre + personaje a la izquierda, texto a la derecha */
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-  column-gap: clamp(32px, 7vw, 112px);
-  flex: 1;
+/* Cielo: ocupa toda la portada, también por debajo de la cabecera transparente.
+   Se desvanece hacia abajo para no cortarse en seco contra la sección siguiente. */
+.home__sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 72%, transparent 100%);
 }
 
-.hero__side {
+.home__content {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;   /* nombre arriba, personaje abajo */
-  gap: 2rem;
-  min-width: 0;
+  align-items: center;
+  text-align: center;
 }
 
-.hero__title {
-  margin: 0;
-  font-size: clamp(2.25rem, 4.6vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.025em;
+/* Destello de cuatro puntas sobre el texto */
+.home__ornament {
+  width: clamp(18px, 1.7vw, 26px);
+  margin-bottom: clamp(1rem, 2.4vw, 1.75rem);
+  color: #ffe7ad;
 }
 
-.hero__role {
-  margin: 0.75rem 0 0;
-  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
-  font-weight: 500;
-  color: var(--fg);
-}
-
-/* Personaje sentado, quieto. La sombra de contacto es una elipse suave bajo las zapatillas. */
-.hero__character {
-  position: relative;
+.home__ornament svg {
   display: block;
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 8px rgba(255, 214, 130, 0.75));
+  animation: ornament-pulse 4.5s ease-in-out infinite;
 }
 
-.hero__character::after {
-  content: '';
+@keyframes ornament-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.95; }
+  50%      { transform: scale(0.82) rotate(8deg); opacity: 0.6; }
+}
+
+.home__message {
+  max-width: 15em;
+  margin: 0;
+  font-family: "Instrument Serif", "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 1rem + 3.4vw, 4.25rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -0.012em;
+  color: #f6f3ec;
+  text-wrap: balance;
+  text-shadow: 0 2px 40px rgba(3, 14, 42, 0.6);
+}
+
+/* La frase importante en cursiva y con el tono cálido de las estrellas */
+.home__message em {
+  font-style: italic;
+  color: #ffe7ad;
+  text-shadow: 0 0 32px rgba(255, 205, 110, 0.38), 0 2px 40px rgba(3, 14, 42, 0.6);
+}
+
+/* Personaje: pegado a la esquina inferior derecha. El piso se desvanece hacia la izquierda. */
+.home__character {
   position: absolute;
-  left: 50%;
-  bottom: -1%;
-  z-index: 0;
-  width: 84%;
-  height: 7%;
-  transform: translateX(-50%);
-  background: radial-gradient(ellipse at center, rgba(3, 12, 40, 0.55) 0%, rgba(3, 12, 40, 0) 70%);
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: min(62vw, 880px);
+  margin: 0;
   pointer-events: none;
 }
 
-.hero__character img {
-  position: relative;
-  z-index: 1;
+.home__character img {
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
-  max-width: 100%;
-  max-height: min(56vh, 520px);
-  max-height: min(56dvh, 520px);
 }
 
-/* Aparece con un fundido suave cuando termina la intro */
-.js .hero__character img {
+/* Aparecen con un fundido suave cuando termina la intro: primero el cielo, después el texto */
+.js .home__sky,
+.js .home__ornament,
+.js .home__message,
+.js .home__character img {
   opacity: 0;
-  transition: opacity 900ms var(--ease) 150ms;
 }
 
-.is-ready .hero__character img {
+.js .home__message {
+  transform: translateY(18px);
+  filter: blur(8px);
+}
+
+.is-ready .home__sky {
   opacity: 1;
+  transition: opacity 2200ms var(--ease);
 }
 
-.hero__about {
-  min-width: 0;
-  max-width: 38rem;
-  padding-top: 0.35rem;
+.is-ready .home__ornament {
+  opacity: 1;
+  transition: opacity 1000ms var(--ease) 250ms;
 }
 
-.hero__about p {
-  margin: 0 0 1.2rem;
-  font-size: clamp(1rem, 0.55rem + 1.1vw, 1.125rem);
-  line-height: 1.7;
-  color: #fff;
+.is-ready .home__message {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: opacity 1300ms var(--ease) 450ms, transform 1300ms var(--ease) 450ms, filter 1300ms var(--ease) 450ms;
 }
 
-.hero__about strong {
-  font-weight: 700;
+.is-ready .home__character img {
+  opacity: 1;
+  transition: opacity 1400ms var(--ease) 700ms;
 }
 
-.hero__about .hero__note {
-  margin: 2rem 0 0;
-  font-size: 0.8125rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* Tablet y celular: una sola columna (nombre, personaje, texto) */
 @media (max-width: 860px) {
-  .home {
-    padding-top: clamp(88px, 14vh, 120px);
-    padding-bottom: clamp(32px, 6vh, 64px);
+  .home__character {
+    width: min(100vw, 700px);
   }
+}
 
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    row-gap: 2rem;
-  }
-
-  .hero__side {
-    gap: 1.75rem;
-  }
-
-  .hero__character img {
-    max-height: min(46dvh, 420px);
-  }
-
-  .hero__about {
-    max-width: none;
+@media (max-width: 600px) {
+  /* En pantallas angostas el personaje se agranda un poco y se recorta por el borde derecho */
+  .home__character {
+    width: 112vw;
+    right: -6vw;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .js .hero__character img {
+  .js .home__message {
+    transform: none;
+    filter: none;
+  }
+
+  .is-ready .home__sky,
+  .is-ready .home__ornament,
+  .is-ready .home__message,
+  .is-ready .home__character img {
     transition: none;
   }
-}
 
-.hero__link {
-  display: inline-block;
-  margin-top: 2rem;
-  padding-bottom: 2px;
-  font-size: 0.9375rem;
-  letter-spacing: 0.06em;
-  color: var(--fg);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-  transition: border-color 0.2s;
-}
-
-.hero__link:hover {
-  border-color: var(--fg);
-}
-
-.hero__link:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 4px;
+  .home__ornament svg {
+    animation: none;
+  }
 }
 
 /* ==========================================================================
@@ -820,6 +828,12 @@ html.light-mode .site-header {
   width: clamp(100px, 18vw, 140px);
   height: auto;
   flex-shrink: 0;
+}
+
+/* Los trazos del logo se inyectan desde js/loader.js; sin esta regla se pintaban de negro */
+.site-header__logo .logo-fill {
+  fill: #fff;
+  fill-rule: evenodd;
 }
 
 .site-header__nav {
