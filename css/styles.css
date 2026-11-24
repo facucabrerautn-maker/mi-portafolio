@@ -31,12 +31,21 @@ html {
    y sin elementos más grandes que la pantalla ni filtros de blur, así no genera scroll lateral.
    Paleta: #071B3A (bordes, oscuro) → #75DCFF (centro, brillante).
    Para ajustarlo: el 0.35 de la capa "oscurece" controla qué tan oscuro es el conjunto, y
-   "85% 60%" controla el tamaño del brillo central (ancho y alto). */
+   "85% 60%" controla el tamaño del brillo central (ancho y alto).
+   La capa "portada" oscurece SOLO la zona de la portada, para que el texto blanco se lea bien
+   (contraste mínimo 4,5:1) sin importar cuánto mida la portada: se calcula desde abajo
+   (la sección Proyectos mide 100vh) y se desvanece justo antes de ella. El 0.5 es su intensidad. */
 #inicio {
   position: relative;
   outline: none;
   background:
     radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px) 0 0 / 6px 6px, /* puntos sutiles */
+    linear-gradient(                                                                   /* portada */
+      to bottom,
+      rgba(3, 14, 42, 0.5) 0,
+      rgba(3, 14, 42, 0.5) calc(100% - 100vh - 20px),
+      rgba(3, 14, 42, 0) calc(100% - 100vh + 120px)
+    ),
     linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece */
     radial-gradient(
       ellipse 85% 60% at 50% 50%,
@@ -299,37 +308,151 @@ body {
 }
 
 /* ==========================================================================
-   Inicio (contenido provisional)
+   Inicio (portada)
    ========================================================================== */
 .home {
+  /* el fondo viene del <main> (ver #inicio) */
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: clamp(24px, 6vw, 80px);
+  /* arriba se deja lugar para el logo fijo de la esquina */
+  padding: clamp(104px, 15vh, 150px) clamp(20px, 6vw, 80px) clamp(16px, 3vh, 32px);
   outline: none;
-  /* el fondo viene del <main> (ver #inicio) */
 }
 
+/* Dos columnas: nombre + personaje a la izquierda, texto a la derecha */
 .hero {
-  max-width: 44rem;
-  text-align: center;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  column-gap: clamp(32px, 7vw, 112px);
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero__side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;   /* nombre arriba, personaje abajo */
+  gap: 2rem;
+  min-width: 0;
 }
 
 .hero__title {
   margin: 0;
-  font-size: clamp(2.25rem, 7vw, 4.5rem);
+  font-size: clamp(2.25rem, 4.6vw, 3.5rem);
   font-weight: 700;
   line-height: 1.05;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
 
-.hero__lead {
-  margin: 1rem 0 0;
-  font-size: clamp(1.05rem, 2.4vw, 1.4rem);
-  color: var(--muted);
+.hero__role {
+  margin: 0.75rem 0 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+  font-weight: 500;
+  color: var(--fg);
+}
+
+/* Personaje sentado, quieto. La sombra de contacto es una elipse suave bajo las zapatillas. */
+.hero__character {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.hero__character::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -1%;
+  z-index: 0;
+  width: 84%;
+  height: 7%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center, rgba(3, 12, 40, 0.55) 0%, rgba(3, 12, 40, 0) 70%);
+  pointer-events: none;
+}
+
+.hero__character img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: min(56vh, 520px);
+  max-height: min(56dvh, 520px);
+}
+
+/* Aparece con un fundido suave cuando termina la intro */
+.js .hero__character img {
+  opacity: 0;
+  transition: opacity 900ms var(--ease) 150ms;
+}
+
+.is-ready .hero__character img {
+  opacity: 1;
+}
+
+.hero__about {
+  min-width: 0;
+  max-width: 38rem;
+  padding-top: 0.35rem;
+}
+
+.hero__about p {
+  margin: 0 0 1.2rem;
+  font-size: clamp(1rem, 0.55rem + 1.1vw, 1.125rem);
+  line-height: 1.7;
+  color: #fff;
+}
+
+.hero__about strong {
+  font-weight: 700;
+}
+
+.hero__about .hero__note {
+  margin: 2rem 0 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Tablet y celular: una sola columna (nombre, personaje, texto) */
+@media (max-width: 860px) {
+  .home {
+    padding-top: clamp(88px, 14vh, 120px);
+    padding-bottom: clamp(32px, 6vh, 64px);
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2rem;
+  }
+
+  .hero__side {
+    gap: 1.75rem;
+  }
+
+  .hero__character img {
+    max-height: min(46dvh, 420px);
+  }
+
+  .hero__about {
+    max-width: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .hero__character img {
+    transition: none;
+  }
 }
 
 .hero__link {
@@ -456,13 +579,6 @@ body {
   color: var(--muted);
 }
 
-.hero__note {
-  margin: 3rem 0 0;
-  font-size: 0.8125rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #5c5c59;
-}
 
 /* ==========================================================================
    Botón de contacto (fly-through arrow)
