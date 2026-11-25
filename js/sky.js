@@ -47,6 +47,7 @@
     ];
 
     var PAD = 70;
+    var HEADER_BAND = 110;   // las estrellas grandes no se dibujan bajo la cabecera
     var zone = null;
 
     function makeStar(kind) {
@@ -97,7 +98,7 @@
       for (var i = 0; i < stars.length; i++) {
         var s = stars[i];
         if (s.kind !== 2) continue;
-        for (var tries = 0; tries < 60 && textShade(s.x, s.y) > 0; tries++) {
+        for (var tries = 0; tries < 60 && (textShade(s.x, s.y) > 0 || s.y * h < HEADER_BAND); tries++) {
           s.x = Math.random(); s.y = Math.random();
         }
       }
@@ -211,82 +212,66 @@
   })();
 
   /* ==========================================================================
-     MOTOR 2: DAY SKY — Nubes procedurales (modo claro)
+     MOTOR 2: DAY SKY — Nubes con sprites pre-renderizados (modo claro)
+     El degradé azul del cielo lo pone el CSS; acá solo se dibujan las nubes.
      ========================================================================== */
   var DaySkyEngine = (function () {
-    // Configuración de capas de nubes
+    var SPRITE_COUNT = 6;
     var LAYERS = [
-      { count: 12,  speed: 0.006,  scale: 0.00035,  baseAlpha: 0.18,  heightRange: [0.05, 0.35],  thickness: [0.08, 0.18] },  // lejanas
-      { count: 18,  speed: 0.014,  scale: 0.00055,  baseAlpha: 0.28,  heightRange: [0.15, 0.55],  thickness: [0.06, 0.14] },  // medias
-      { count: 24,  speed: 0.028,  scale: 0.00085,  baseAlpha: 0.38,  heightRange: [0.30, 0.75],  thickness: [0.04, 0.10] }   // cercanas
+      // far: chicas, lentas y translúcidas · near: grandes y más rápidas
+      { count: 6, speed: 5,  scale: [0.4, 0.65], alpha: [0.5, 0.7],  y: [0.02, 0.5] },
+      { count: 5, speed: 11, scale: [0.65, 0.95], alpha: [0.7, 0.85], y: [0.08, 0.7] },
+      { count: 3, speed: 20, scale: [0.95, 1.3], alpha: [0.8, 0.95],  y: [0.2, 0.9] }
     ];
+    var SW = 460, SH = 200;          // tamaño de cada sprite (px)
+    var sprites = [];
+    var clouds = [];
+    var textZone = null;
+    var PAD = 60;
 
-    var clouds = [];      // cada nube: { layer, x, y, w, h, seed, phase, alpha }
-    var noiseCache = {};  // cache simple de ruido 1D
-    var lastScrollY = 0;
-    var scrollOffset = 0; // parallax accumulator
-
-    // Ruido pseudo-aleatorio determinístico (hash simple)
-    function hash1(x) {
-      x = (x ^ 61) ^ (x >>> 16);
-      x = x * 0x7feb352d;
-      x = (x ^ x >>> 15) * 0x846ca68b;
-      x = x ^ x >>> 16;
-      return (x >>> 0) / 4294967296;
-    }
-
-    // Ruido 1D suave (value noise)
-    function noise1D(x) {
-      var i = Math.floor(x), f = x - i;
-      var a = hash1(i), b = hash1(i + 1);
-      var u = f * f * (3 - 2 * f); // smoothstep
-      return a + (b - a) * u;
-    }
-
-    // Ruido 2D para forma de nube (fBm simplificado)
-    function cloudNoise(x, y, seed, scale) {
-      var nx = (x + seed * 1000) * scale;
-      var ny = (y + seed * 2000) * scale;
-      var sum = 0, amp = 1, freq = 1, max = 0;
-      for (var o = 0; o < 4; o++) {
-        var n = noise1D(nx * freq + noise1D(ny * freq + seed * 3000));
-        sum += n * amp;
-        max += amp;
-        amp *= 0.55;
-        freq *= 2.1;
+    // Una nube = varias bolitas con la base plana, luz arriba y sombra azulada abajo
+    function makeSprite() {
+      var c = document.createElement('canvas');
+      c.width = SW; c.height = SH;
+      var g = c.getContext('2d');
+      var base = SH * 0.78;
+      var puffs = 6 + Math.floor(Math.random() * 4);
+      g.fillStyle = '#fff';
+      for (var i = 0; i < puffs; i++) {
+        var t = (i + 0.5) / puffs;
+        var px = SW * (0.12 + 0.76 * t) + rand(-12, 12);
+        var hump = Math.sin(t * Math.PI);                 // más alta en el centro
+        var r = SH * (0.16 + 0.2 * hump) * rand(0.8, 1.15);
+        g.beginPath(); g.arc(px, base - r * 0.75, r, 0, 6.2832); g.fill();
       }
-      return sum / max;
-    }
-
-    function createCloud(layer, layerIdx) {
-      var lw = layer.widthRange || [0.15, 0.35];
-      var lh = layer.thickness;
-      return {
-        layer: layerIdx,
-        x: rand(-0.3, 1.3),           // empieza fuera de pantalla
-        y: rand(layer.heightRange[0], layer.heightRange[1]),
-        w: rand(lw[0], lw[1]),
-        h: rand(lh[0], lh[1]),
-        seed: rand(0, 10000),
-        phase: rand(0, Math.PI * 2),
-        alpha: layer.baseAlpha * rand(0.7, 1.1),
-        speedMul: rand(0.85, 1.15)
-      };
+      g.fillRect(SW * 0.14, base - SH * 0.12, SW * 0.72, SH * 0.12);  // panza llena
+      g.globalCompositeOperation = 'source-atop';
+      var sh = g.createLinearGradient(0, SH * 0.25, 0, base);
+      sh.addColorStop(0, 'rgba(255,255,255,0)');
+      sh.addColorStop(1, 'rgba(120,156,206,0.42)');
+      g.fillStyle = sh; g.fillRect(0, 0, SW, SH);
+      return c;
     }
 
     function populate() {
+      if (!sprites.length) for (var i = 0; i < SPRITE_COUNT; i++) sprites.push(makeSprite());
       clouds = [];
+      var tune = clamp(w / 1280, 0.6, 1.2);
       for (var li = 0; li < LAYERS.length; li++) {
-        var layer = LAYERS[li];
-        for (var i = 0; i < layer.count; i++) {
-          clouds.push(createCloud(layer, li));
+        var L = LAYERS[li];
+        for (var k = 0; k < L.count; k++) {
+          clouds.push({
+            sprite: sprites[Math.floor(Math.random() * sprites.length)],
+            x: Math.random(),                      // posición inicial (fracción del recorrido)
+            y: rand(L.y[0], L.y[1]),
+            s: rand(L.scale[0], L.scale[1]) * tune,
+            a: rand(L.alpha[0], L.alpha[1]),
+            v: L.speed * rand(0.8, 1.2),
+            flip: Math.random() < 0.5
+          });
         }
       }
-      // Ordenar por capa (lejanas primero) y luego por y (altas primero = más atrás)
-      clouds.sort(function (a, b) {
-        if (a.layer !== b.layer) return a.layer - b.layer;
-        return a.y - b.y;
-      });
+      clouds.sort(function (a, b) { return a.s - b.s; });  // lejanas primero
     }
 
     function measureZone() {
@@ -296,95 +281,38 @@
       return { x0: cr.left - hr.left, y0: cr.top - hr.top, x1: cr.right - hr.left, y1: cr.bottom - hr.top };
     }
 
-    var textZone = null;
-    var PAD = 90;
-
-    function textShade(nx, ny) {
-      if (!textZone) return 0;
-      var px = nx * w, py = ny * h;
+    // Las nubes se apagan un poco detrás del mensaje de la portada
+    function textFade(px, py) {
+      if (!textZone) return 1;
       var dx = Math.max(textZone.x0 - px, 0, px - textZone.x1);
       var dy = Math.max(textZone.y0 - py, 0, py - textZone.y1);
-      return clamp(1 - Math.sqrt(dx * dx + dy * dy) / PAD, 0, 1);
-    }
-
-    function drawCloud(cloud, now) {
-      var cx = cloud.x * w;
-      var cy = cloud.y * h;
-      var cw = cloud.w * w;
-      var ch = cloud.h * h;
-
-      // Fade near text
-      var shade = textShade(cloud.x, cloud.y);
-      var alpha = cloud.alpha * (1 - 0.7 * shade);
-      if (alpha < 0.02) return;
-
-      ctx.save();
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = '#ffffff';
-
-      // Dibujar nube como múltiples elipses superpuestas (billboarding)
-      var segments = 5 + Math.floor(cloud.w * 8);
-      for (var s = 0; s < segments; s++) {
-        var tx = (s / (segments - 1) - 0.5) * cw;
-        // Forma superior usando ruido
-        var n = cloudNoise(tx * 0.02, 0, cloud.seed, LAYERS[cloud.layer].scale);
-        var h = ch * (0.6 + 0.4 * n);
-        var wSeg = cw / segments * 1.3;
-
-        var grad = ctx.createRadialGradient(cx + tx, cy, 0, cx + tx, cy, wSeg * 0.6);
-        grad.addColorStop(0, 'rgba(255,255,255,1)');
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = grad;
-
-        ctx.beginPath();
-        ctx.ellipse(cx + tx, cy, wSeg * 0.6, h * 0.5, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.restore();
+      return 1 - 0.65 * clamp(1 - Math.sqrt(dx * dx + dy * dy) / PAD, 0, 1);
     }
 
     return {
-      init: function () {
-        textZone = measureZone();
-        populate();
-      },
-      resize: function () {
-        textZone = measureZone();
-        populate();
-      },
+      init: function () { textZone = measureZone(); populate(); },
+      resize: function () { textZone = measureZone(); populate(); },
       draw: function (now) {
         ctx.clearRect(0, 0, w, h);
-
-        // Parallax basado en scroll (suave)
-        var targetScroll = window.scrollY || window.pageYOffset || 0;
-        scrollOffset += (targetScroll - lastScrollY - scrollOffset) * 0.08;
-        lastScrollY = targetScroll;
-
-        var t = now * 0.001;
-
+        var t = reduceMotion ? 0 : now * 0.001;
         for (var i = 0; i < clouds.length; i++) {
           var c = clouds[i];
-          var layer = LAYERS[c.layer];
-
-          // Deriva horizontal + parallax
-          var drift = (t * layer.speed * c.speedMul) % 1.6;
-          var parallax = scrollOffset * (0.05 + layer.speed * 2) * 0.001;
-          var nx = (c.x + drift + parallax) % 1.6;
-          if (nx > 1.3) nx -= 1.6;
-          if (nx < -0.3) nx += 1.6;
-
-          // Morphing vertical lento
-          var morph = Math.sin(t * 0.07 * c.speedMul + c.phase) * 0.015;
-          var ny = clamp(c.y + morph, layer.heightRange[0], layer.heightRange[1]);
-
-          // Guardar posición original para dibujar
-          var ox = c.x, oy = c.y;
-          c.x = nx; c.y = ny;
-          drawCloud(c, now);
-          c.x = ox; c.y = oy; // restaurar para próximo frame
+          var cw = SW * c.s, ch = SH * c.s;
+          var span = w + cw;
+          var x = ((c.x * span + t * c.v) % span) - cw;
+          var y = c.y * h - ch / 2;
+          ctx.globalAlpha = c.a * textFade(x + cw / 2, y + ch / 2);
+          if (c.flip) {
+            ctx.save(); ctx.translate(x + cw, y); ctx.scale(-1, 1);
+            ctx.drawImage(c.sprite, 0, 0, cw, ch);
+            ctx.restore();
+          } else {
+            ctx.drawImage(c.sprite, x, y, cw, ch);
+          }
         }
+        ctx.globalAlpha = 1;
       },
-      start: function () { lastScrollY = window.scrollY || 0; scrollOffset = 0; },
+      start: function () {},
       stop: function () {},
       destroy: function () { clouds = []; }
     };

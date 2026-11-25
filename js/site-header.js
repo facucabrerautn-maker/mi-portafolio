@@ -4,28 +4,32 @@
 (function () {
   'use strict';
 
+  var html = document.documentElement;
+
+  // Texto localizado (i18n.js se carga antes que este archivo)
+  function t(key) { return window.I18n ? window.I18n.translate(key, window.I18n.getLang()) : key; }
+
   /* ---------- Theme Toggle ---------- */
   var themeBtn = document.querySelector('[data-theme-btn]');
-  var html = document.documentElement;
   var THEME_KEY = 'site-theme';
 
+  function readStored(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+
   function getInitialTheme() {
-    var stored = localStorage.getItem(THEME_KEY);
+    var stored = readStored(THEME_KEY);
     if (stored === 'light' || stored === 'dark') return stored;
     return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
   }
 
   function applyTheme(theme) {
-    if (theme === 'light') {
-      html.classList.add('light-mode');
-      themeBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
-      themeBtn.setAttribute('aria-pressed', 'true');
-    } else {
-      html.classList.remove('light-mode');
-      themeBtn.setAttribute('aria-label', 'Cambiar a modo claro');
-      themeBtn.setAttribute('aria-pressed', 'false');
-    }
-    localStorage.setItem(THEME_KEY, theme);
+    html.classList.toggle('light-mode', theme === 'light');
+    themeBtn.setAttribute('aria-pressed', String(theme === 'light'));
+    themeBtn.setAttribute('aria-label', t(theme === 'light' ? 'a11y.themeToDark' : 'a11y.themeToLight'));
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#86c6f3' : '#0a0a0a');
+    try { localStorage.setItem(THEME_KEY, theme); } catch (e) { /* sin storage */ }
   }
 
   function initTheme() {
@@ -34,7 +38,7 @@
 
     // Escuchar cambios del sistema
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function (e) {
-      if (!localStorage.getItem(THEME_KEY)) {
+      if (!readStored(THEME_KEY)) {
         applyTheme(e.matches ? 'light' : 'dark');
       }
     });
@@ -50,15 +54,19 @@
   var soundBtn = document.querySelector('[data-sound-btn]');
   var SOUND_KEY = 'site-sound-enabled';
 
+  function setSound(enabled) {
+    soundBtn.setAttribute('aria-pressed', String(enabled));
+    soundBtn.setAttribute('aria-label', t(enabled ? 'a11y.soundOn' : 'a11y.soundOff'));
+    try { localStorage.setItem(SOUND_KEY, String(enabled)); } catch (e) { /* sin storage */ }
+  }
+
   function initSound() {
     // Por defecto silenciado: todavía no hay sonidos y los navegadores exigen un gesto del usuario para reproducir
-    var enabled = localStorage.getItem(SOUND_KEY) === 'true';
-    soundBtn.setAttribute('aria-pressed', enabled.toString());
+    setSound(readStored(SOUND_KEY) === 'true');
 
     soundBtn.addEventListener('click', function () {
       var newState = soundBtn.getAttribute('aria-pressed') !== 'true';
-      soundBtn.setAttribute('aria-pressed', newState.toString());
-      localStorage.setItem(SOUND_KEY, newState.toString());
+      setSound(newState);
 
       // Placeholder para futura implementación de sonidos
       if (newState && window.AudioContext) {
@@ -75,7 +83,7 @@
   var LANG_KEY = 'site-lang';
 
   function getInitialLang() {
-    var stored = localStorage.getItem(LANG_KEY);
+    var stored = readStored(LANG_KEY);
     if (stored === 'es' || stored === 'en') return stored;
     // Detectar por navigator.language
     return navigator.language.startsWith('es') ? 'es' : 'en';
@@ -84,12 +92,18 @@
   function applyLang(lang) {
     document.documentElement.lang = lang;
     if (langText) langText.textContent = lang.toUpperCase();
-    langBtn.setAttribute('aria-label', lang === 'es' ? 'Cambiar a inglés' : 'Switch to Spanish');
-    langBtn.setAttribute('aria-pressed', lang === 'en');
-    localStorage.setItem(LANG_KEY, lang);
+    langBtn.setAttribute('aria-pressed', String(lang === 'en'));
+    try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* sin storage */ }
 
-    // Disparar evento personalizado para que i18n.js actualice los textos
+    // i18n.js actualiza los textos; después se refrescan las etiquetas que dependen del estado
     document.dispatchEvent(new CustomEvent('langchange', { detail: { lang: lang } }));
+    refreshLabels();
+  }
+
+  function refreshLabels() {
+    langBtn.setAttribute('aria-label', t('a11y.langTo'));
+    themeBtn.setAttribute('aria-label', t(html.classList.contains('light-mode') ? 'a11y.themeToDark' : 'a11y.themeToLight'));
+    soundBtn.setAttribute('aria-label', t(soundBtn.getAttribute('aria-pressed') === 'true' ? 'a11y.soundOn' : 'a11y.soundOff'));
   }
 
   function initLang() {
@@ -128,22 +142,39 @@
     });
   }
 
-  /* ---------- Mobile menu toggle (para futuro hamburger) ---------- */
-  // Se deja preparado por si se añade un botón hamburguesa
+  /* ---------- Cabecera con fondo al hacer scroll ---------- */
+  function initScrollState() {
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+    function update() { header.classList.toggle('is-scrolled', (window.scrollY || 0) > 24); }
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
+  /* ---------- Enlace "saltar al contenido" ---------- */
+  function initSkipLink() {
+    var link = document.querySelector('[data-skip-link]');
+    var main = document.querySelector('main');
+    if (!link || !main) return;
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      main.focus();
+      main.scrollIntoView();
+    });
+  }
 
   /* ---------- Init ---------- */
   initTheme();
   initSound();
   initLang();
   initSmoothScroll();
+  initScrollState();
+  initSkipLink();
 
   /* Exponer funciones para debugging si se necesita */
   window.SiteHeader = {
     setTheme: applyTheme,
     setLang: applyLang,
-    toggleSound: function (enabled) {
-      soundBtn.setAttribute('aria-pressed', enabled.toString());
-      localStorage.setItem(SOUND_KEY, enabled.toString());
-    }
+    toggleSound: setSound
   };
 })();

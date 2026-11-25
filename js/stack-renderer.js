@@ -19,18 +19,7 @@
   };
 
   function getTranslation(key) {
-    if (window.I18n && window.I18n.translate) {
-      var lang = window.I18n.getLang();
-      return window.I18n.translate(key, lang);
-    }
-    // Fallback a español si i18n no está listo
-    var fallback = {
-      'stack.intro': 'Estas son las tecnologías con las que diseño, desarrollo y despliego mis proyectos',
-      'stack.frontend': 'Frontend',
-      'stack.backend': 'Backend y Base de datos',
-      'stack.tools': 'Herramientas'
-    };
-    return fallback[key] || key;
+    return window.I18n.translate(key, window.I18n.getLang());
   }
 
   function render() {

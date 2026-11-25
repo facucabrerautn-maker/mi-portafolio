@@ -30,15 +30,7 @@
   var currentLang = document.documentElement.lang || 'es';
 
   function getLabel(key, lang) {
-    if (window.I18n && window.I18n.translate) {
-      return window.I18n.translate('contact.' + key, lang);
-    }
-    // Fallback
-    var fallback = {
-      es: { github: 'GitHub', email: 'Email', whatsapp: 'WhatsApp' },
-      en: { github: 'GitHub', email: 'Email', whatsapp: 'WhatsApp' }
-    };
-    return fallback[lang]?.[key] || key;
+    return window.I18n.translate('contact.' + key, lang);
   }
 
   function render() {

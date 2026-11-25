@@ -18,92 +18,58 @@
   --ease: cubic-bezier(0.37, 0, 0.63, 1); /* easeInOutSine */
 }
 
-/* Light mode variables - se aplican con clase .light-mode en <html> */
+/* Light mode variables - se aplican con clase .light-mode en <html>.
+   Cielo diurno azul: el texto es oscuro (#0b1a2f) y las tarjetas son cristal blanco,
+   así el contraste se mantiene alto sobre cualquier parte del degradé. */
 html.light-mode {
-  --bg: #fafafa;
+  --bg: #dcecfb;
   --bg-elevated: #ffffff;
-  --fg: #111111;
-  --muted: #555555;
-  --accent: #0066cc;
-  --accent-rgb: 0, 102, 204;
-  --accent-dim: rgba(0, 102, 204, 0.1);
-  --border: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.15);
-  --card-bg: rgba(0, 0, 0, 0.02);
-  --card-hover: rgba(0, 0, 0, 0.04);
-  --shadow: rgba(0, 0, 0, 0.1);
+  --fg: #0b1a2f;
+  --muted: #34475f;
+  --accent: #0a58b8;
+  --accent-rgb: 10, 88, 184;
+  --accent-dim: rgba(10, 88, 184, 0.12);
+  --border: rgba(11, 26, 47, 0.14);
+  --border-strong: rgba(11, 26, 47, 0.26);
+  --card-bg: rgba(255, 255, 255, 0.62);
+  --card-hover: rgba(255, 255, 255, 0.82);
+  --shadow: rgba(20, 60, 110, 0.18);
   color-scheme: light;
 }
 
-html.light-mode .work {
-  background:
-    /* Puntos sutiles consistentes con #inicio */
-    radial-gradient(rgba(0, 0, 0, 0.015) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    /* Continuación suave del cielo diurno — sin banda azul */
-    linear-gradient(
-      to bottom,
-      #faf9f5 0%,
-      #faf9f5 calc(100% - 100vh + 120px),
-      #f5f0e8 100%
-    ),
-    var(--bg);
-}
-
-/* Light mode adjustments for home section (portada) */
+/* Portada en modo claro */
 html.light-mode .home__ornament {
-  color: #0066cc;
+  color: var(--accent);
 }
 html.light-mode .home__ornament svg {
-  filter: drop-shadow(0 0 8px rgba(0, 102, 204, 0.5));
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
 }
 html.light-mode .home__message {
-  color: #111111;
-  text-shadow: 0 2px 40px rgba(0, 102, 204, 0.15);
+  color: var(--fg);
+  text-shadow: 0 1px 28px rgba(255, 255, 255, 0.6);
 }
 html.light-mode .home__message em {
-  color: #0066cc;
-  text-shadow: 0 0 32px rgba(0, 102, 204, 0.25), 0 2px 40px rgba(0, 102, 204, 0.15);
+  color: var(--accent);
 }
 
-/* Light mode: site-logo (esquina superior izquierda) */
-html.light-mode .site-logo__svg {
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
-}
+/* Logo (esquina y cabecera): un trazo claro fino define los recortes (gafas/ojos) */
 
-/* Light mode: logo del header y esquina — las gafas/ojos son recortes (evenodd),
-   en modo claro se ven negros. Solución: trazo blanco fino para definir los recortes. */
-html.light-mode .site-logo__svg .logo-fill,
 html.light-mode .site-header__logo .logo-fill {
-  stroke: #fafafa;
+  stroke: rgba(255, 255, 255, 0.9);
   stroke-width: 1.5;
   paint-order: stroke fill;
 }
 
-/* Light mode: personaje hero — la máscara usa transparent que en modo claro muestra blanco.
-   Añadimos un pseudo-elemento con gradiente cálido detrás para que el fade sea coherente. */
-html.light-mode .home__character::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(to right, #fdf8f0 0%, #fdf8f0 25%, transparent 40%);
-  pointer-events: none;
-}
-
-/* Light mode: header buttons - iconos usan currentColor así que heredan var(--fg) */
 html.light-mode .site-header__btn {
   color: var(--fg);
 }
 
-/* Light mode: loader skip button border */
 html.light-mode .loader__skip {
   border-color: var(--border);
 }
 html.light-mode .loader__skip:hover {
   border-color: var(--border-strong);
 }
-
-/* Light mode: mobile menu background handled by var(--bg-elevated) */
 
 *,
 *::before,
@@ -123,11 +89,9 @@ html {
   }
 }
 
-/* Fondo unificado: UN solo gradiente continuo detrás de Inicio y Proyectos.
-   Va sobre todo el <main> (y no sobre cada sección) para que no haya costura entre ambas.
+/* Fondo unificado: UN solo gradiente continuo sobre todo el <main> (portada + proyectos),
+   para que no haya costura entre secciones.
    Paleta: #071B3A (bordes, oscuro) → #75DCFF (centro, brillante).
-   El centro del radial está en la portada (50% 30% de #inicio), NO en la costura,
-   así la sección de proyectos no se ve más clara que la portada.
    La capa "portada" oscurece SOLO la zona de la portada para contraste del texto. */
 #inicio {
   position: relative;
@@ -142,163 +106,37 @@ html {
     ),
     linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece global */
     radial-gradient(
-      ellipse 85% 60% at 50% 30%,           /* centro en la portada, no en la costura */
-      #75DCFF 0%,
-      #54CCFA 11%,
-      #36B9F5 22%,
-      #20A6F0 33%,
-      #168FE5 44%,
-      #1678D2 55%,
-      #145DA8 66%,
-      #10447F 77%,
-      #0A2D5E 88%,
-      #071B3A 100%
+      ellipse 85% 60% at 50% 30%,
+      #75DCFF 0%, #54CCFA 11%, #36B9F5 22%, #20A6F0 33%, #168FE5 44%,
+      #1678D2 55%, #145DA8 66%, #10447F 77%, #0A2D5E 88%, #071B3A 100%
     ),
     var(--bg);
 }
 
-/* Light mode: fondo de #inicio adaptado — cielo diurno cálido */
-html.light-mode #inicio {
-  background:
-    /* Puntos sutiles de "polvo/atmósfera" */
-    radial-gradient(rgba(0, 0, 0, 0.015) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    /* Gradiente de cielo diurno: horizonte más cálido, cenit más frío */
-    linear-gradient(
-      to bottom,
-      /* Zona portada: tono cálido suave */
-      #fdf8f0 0%,
-      #fdf8f0 calc(100% - 100vh - 20px),
-      /* Transición hacia proyectos */
-      #f5f0e8 calc(100% - 100vh + 40px),
-      /* Zona proyectos: neutro cálido */
-      #faf9f5 calc(100% - 100vh + 120px),
-      #faf9f5 100%
-    ),
-    /* Halo central suave (detrás del texto, no compite) */
-    radial-gradient(
-      ellipse 85% 55% at 50% 35%,
-      rgba(255, 240, 220, 0.6) 0%,
-      rgba(250, 230, 200, 0.3) 25%,
-      rgba(245, 220, 180, 0.1) 50%,
-      transparent 70%
-    ),
-    var(--bg);
-}
-
-/* Fondo nocturno para página Sobre mí — gradiente radial azul PROFUNDO (legible) */
-#sobre-mi {
-  position: relative;
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.02) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    radial-gradient(
-      ellipse 85% 60% at 50% 35%,
-      #1a3a5c 0%,      /* azul muy oscuro - casi negro */
-      #14304a 15%,
-      #0e2638 30%,
-      #0a1e2e 45%,
-      #071824 60%,
-      #05121a 75%,
-      #030c12 85%,
-      #02080c 95%,
-      #010406 100%     /* negro puro en los bordes */
-    ),
-    var(--bg);
-}
-
-/* Light mode: fondo diurno cálido para Sobre mí */
-html.light-mode #sobre-mi {
-  background:
-    radial-gradient(rgba(0, 0, 0, 0.015) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    linear-gradient(
-      to bottom,
-      #fdf8f0 0%,
-      #f5f0e8 50%,
-      #faf9f5 100%
-    ),
-    radial-gradient(
-      ellipse 85% 55% at 50% 35%,
-      rgba(255, 240, 220, 0.5) 0%,
-      rgba(250, 230, 200, 0.25) 30%,
-      transparent 65%
-    ),
-    var(--bg);
-}
-
-/* Fondo nocturno para página Stack — mismo que #sobre-mi */
-#stack {
-  position: relative;
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.02) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    radial-gradient(
-      ellipse 85% 60% at 50% 35%,
-      #1a3a5c 0%,
-      #14304a 15%,
-      #0e2638 30%,
-      #0a1e2e 45%,
-      #071824 60%,
-      #05121a 75%,
-      #030c12 85%,
-      #02080c 95%,
-      #010406 100%
-    ),
-    var(--bg);
-}
-
-/* Light mode: fondo diurno cálido para Stack */
-html.light-mode #stack {
-  background:
-    radial-gradient(rgba(0, 0, 0, 0.015) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    linear-gradient(
-      to bottom,
-      #fdf8f0 0%,
-      #f5f0e8 50%,
-      #faf9f5 100%
-    ),
-    radial-gradient(
-      ellipse 85% 55% at 50% 35%,
-      rgba(255, 240, 220, 0.5) 0%,
-      rgba(250, 230, 200, 0.25) 30%,
-      transparent 65%
-    ),
-    var(--bg);
-}
-
-/* Fondo nocturno para página Contacto — mismo que #sobre-mi y #stack */
+/* Páginas interiores (Sobre mí, Stack, Contacto): azul profundo → negro en los bordes */
+#sobre-mi,
+#stack,
 #contacto {
   position: relative;
   background:
     radial-gradient(rgba(255, 255, 255, 0.02) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
     radial-gradient(
       ellipse 85% 60% at 50% 35%,
-      #1a3a5c 0%,
-      #14304a 15%,
-      #0e2638 30%,
-      #0a1e2e 45%,
-      #071824 60%,
-      #05121a 75%,
-      #030c12 85%,
-      #02080c 95%,
-      #010406 100%
+      #1a3a5c 0%, #14304a 15%, #0e2638 30%, #0a1e2e 45%, #071824 60%,
+      #05121a 75%, #030c12 85%, #02080c 95%, #010406 100%
     ),
     var(--bg);
 }
 
-/* Light mode: fondo diurno cálido para Contacto */
+/* Modo claro: un único cielo diurno para TODAS las páginas.
+   Cenit azul → horizonte casi blanco, más un halo luminoso detrás del contenido. */
+html.light-mode #inicio,
+html.light-mode #sobre-mi,
+html.light-mode #stack,
 html.light-mode #contacto {
   background:
-    radial-gradient(rgba(0, 0, 0, 0.015) 0.5px, transparent 0.7px) 0 0 / 8px 8px,
-    linear-gradient(
-      to bottom,
-      #fdf8f0 0%,
-      #f5f0e8 50%,
-      #faf9f5 100%
-    ),
-    radial-gradient(
-      ellipse 85% 55% at 50% 35%,
-      rgba(255, 240, 220, 0.5) 0%,
-      rgba(250, 230, 200, 0.25) 30%,
-      transparent 65%
-    ),
+    radial-gradient(ellipse 70% 40% at 50% 28%, rgba(255, 255, 255, 0.5) 0%, transparent 70%),
+    linear-gradient(to bottom, #4f9fe0 0%, #86c6f3 32%, #bfe0f9 68%, #e6f3fd 100%),
     var(--bg);
 }
 
@@ -328,62 +166,6 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-/* ==========================================================================
-   Logo del sitio (esquina superior izquierda) — logo + "Made by Facu"
-   ========================================================================== */
-.site-logo {
-  position: fixed;
-  top: clamp(16px, 3vw, 28px);
-  left: clamp(16px, 3vw, 28px);
-  z-index: 100;
-  display: block;
-  opacity: 0.7;
-  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
-  pointer-events: auto;
-  text-decoration: none;
-}
-
-.site-logo:hover,
-.site-logo:focus-visible {
-  opacity: 1;
-  transform: scale(1.02);
-}
-
-.site-logo:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 6px;
-  border-radius: 8px;
-}
-
-.site-logo__svg {
-  display: block;
-  width: clamp(120px, 12vw, 170px);
-  height: auto;
-  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.35));
-}
-
-/* Paths del logo (se inyectan desde logo-paths.js) */
-.site-logo__svg .logo-fill {
-  fill: var(--fg);
-  fill-rule: evenodd;
-}
-
-/* Ocultar logo durante la carga para que no se superponga */
-.js body:not(.is-ready) .site-logo {
-  opacity: 0;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-logo {
-    transition: none;
-  }
-  .site-logo:hover,
-  .site-logo:focus-visible {
-    transform: none;
-  }
 }
 
 /* ==========================================================================
@@ -547,7 +329,7 @@ body {
 }
 
 /* ==========================================================================
-   Inicio (portada): cielo estrellado + mensaje centrado + personaje abajo a la derecha
+   Inicio (portada): mensaje centrado + personaje abajo a la derecha
    ========================================================================== */
 @font-face {
   font-family: "Instrument Serif";
@@ -573,7 +355,7 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0 clamp(20px, 6vw, 80px);
-  /* overflow: hidden eliminado: la máscara del canvas (.home__sky) ya hace el fade suave.
+  /* overflow: hidden eliminado: el cielo es un canvas absoluto (.site-sky).
      Así el fondo degradado de #inicio se ve continuo sin corte brusco. */
   outline: none;
 }
@@ -661,7 +443,7 @@ body {
 }
 
 /* Aparecen con un fundido suave cuando termina la intro: primero el cielo, después el texto */
-.js .home__sky,
+
 .js .home__ornament,
 .js .home__message,
 .js .home__character img {
@@ -671,11 +453,6 @@ body {
 .js .home__message {
   transform: translateY(18px);
   filter: blur(8px);
-}
-
-.is-ready .home__sky {
-  opacity: 1;
-  transition: opacity 2200ms var(--ease);
 }
 
 .is-ready .home__ornament {
@@ -715,7 +492,7 @@ body {
     filter: none;
   }
 
-  .is-ready .home__sky,
+  
   .is-ready .home__ornament,
   .is-ready .home__message,
   .is-ready .home__character img {
@@ -736,101 +513,16 @@ body {
   background: transparent;
 }
 
-.stack__inner {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.stack__title {
-  margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-align: center;
-}
-
-.stack__subtitle {
-  margin: 0 0 3rem;
-  font-size: clamp(1rem, 1.2vw, 1.125rem);
-  color: var(--muted);
-  text-align: center;
-}
-
-.stack__categories {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(2rem, 4vw, 3rem);
-}
-
-.stack__category {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.stack__category-title {
-  margin: 0;
-  font-size: clamp(0.875rem, 1vw, 1rem);
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--accent);
-  text-align: center;
-}
-
-.stack__items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(0.75rem, 1.5vw, 1.25rem);
-}
-
-.stack__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  font-size: clamp(0.8125rem, 0.9vw, 0.9375rem);
-  font-weight: 500;
-  color: var(--fg);
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  transition: all 0.2s var(--ease);
-  white-space: nowrap;
-}
-
-.stack__item:hover {
-  background: var(--card-hover);
-  border-color: var(--border-strong);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--shadow);
-}
-
-.stack__item svg {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-  color: var(--accent);
-}
-
 @media (max-width: 600px) {
   .stack {
     padding: clamp(60px, 10vh, 96px) clamp(16px, 5vw, 32px);
   }
 
-  .stack__subtitle {
-    margin-bottom: 2rem;
-  }
+  
 
-  .stack__categories {
-    gap: clamp(1.5rem, 3vw, 2rem);
-  }
+  
 
-  .stack__items {
-    gap: 0.5rem;
-  }
+  
 }
 
 /* ==========================================================================
@@ -939,7 +631,6 @@ body {
   font-size: 0.875rem;
   color: var(--muted);
 }
-
 
 /* ==========================================================================
    Páginas separadas: Sobre mí, Stack, Contacto
@@ -1116,7 +807,7 @@ body {
 
 /* Light mode adjustments para about-page */
 html.light-mode .about-page__name {
-  text-shadow: 0 4px 60px rgba(0, 102, 204, 0.15);
+  text-shadow: 0 2px 40px rgba(255, 255, 255, 0.55);
 }
 
 html.light-mode .about-page__character-spacer {
@@ -1128,27 +819,6 @@ html.light-mode .about-page__character-spacer {
 html.light-mode .about-page__character-spacer::before {
   background: linear-gradient(90deg, transparent, var(--accent), transparent);
   opacity: 0.4;
-}
-
-/* --- Stack (página) --- */
-.stack-page__header {
-  text-align: center;
-  margin-bottom: clamp(40px, 6vh, 60px);
-}
-
-.stack-page__title {
-  margin: 0 0 0.75rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: var(--fg);
-}
-
-.stack-page__subtitle {
-  margin: 0;
-  font-size: clamp(1rem, 1.2vw, 1.125rem);
-  color: var(--muted);
 }
 
 /* --- Stack (página) Bent Grid --- */
@@ -1274,8 +944,17 @@ html.light-mode .stack-page__card:hover {
   border-color: var(--accent);
 }
 
+html.light-mode .stack-page__card,
+html.light-mode .stack-page__badge,
+html.light-mode .contact-page__link,
+html.light-mode .contact-page__cv-image {
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 18px rgba(20, 60, 110, 0.08);
+}
+
 html.light-mode .stack-page__badge {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.8);
   border-color: var(--border);
 }
 
@@ -1508,13 +1187,6 @@ html.light-mode .contact-page__link--cv {
   }
 }
 
-/* Light mode adjustments for interior pages — stack & contacto */
-html.light-mode .stack-page__character-spacer,
-html.light-mode .stack-page__name {
-  text-shadow: 0 4px 60px rgba(0, 102, 204, 0.15);
-}
-
-
 /* ==========================================================================
    Sitio Header (fijo en la parte superior) — transparente
    ========================================================================== */
@@ -1529,9 +1201,17 @@ html.light-mode .stack-page__name {
   transition: background 0.3s var(--ease);
 }
 
-html.light-mode .site-header {
-  background: transparent;
-  border-color: transparent;
+/* Al hacer scroll la cabecera gana un fondo esmerilado para que nav y botones sigan legibles
+   sobre cualquier contenido (carrete, pasto, tarjetas). */
+.site-header.is-scrolled {
+  background: rgba(10, 10, 10, 0.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+html.light-mode .site-header.is-scrolled {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 6px 24px var(--shadow);
 }
 
 .site-header__inner {
@@ -1805,7 +1485,9 @@ html.light-mode .site-header .site-header__icon--moon {
 
 /* Light mode: footer con fondo elevado sutil para separar del body */
 html.light-mode .site-footer {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
 }
 
 .site-footer__inner {
@@ -1881,7 +1563,7 @@ html.light-mode .site-footer {
 }
 
 html.light-mode .site-footer__copy {
-  opacity: 0.7;
+  color: var(--muted);
 }
 
 @media (max-width: 600px) {
@@ -1896,4 +1578,37 @@ html.light-mode .site-footer__copy {
   .site-footer__list {
     gap: clamp(12px, 2.5vw, 16px) clamp(8px, 2vw, 12px);
   }
+}
+
+/* Los elementos de js/layout.js no generan caja propia */
+site-loader,
+site-header,
+site-footer {
+  display: contents;
+}
+
+/* Navegando entre páginas (intro ya vista): la portada aparece rápido */
+.intro-skipped .is-ready .home__ornament,
+.intro-skipped .is-ready .home__message,
+.intro-skipped .is-ready .home__character img {
+  transition-duration: 500ms;
+  transition-delay: 0ms;
+}
+
+/* Enlace "saltar al contenido": visible solo al enfocarlo con teclado */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: var(--fg);
+  color: var(--bg);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: none;
 }

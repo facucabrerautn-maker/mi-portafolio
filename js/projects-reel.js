@@ -389,11 +389,13 @@
     announced = i;
     var p = PROJECTS[i];
     canvas.dataset.index = String(i);
-    canvas.setAttribute('aria-label', 'Carrete de proyectos. Proyecto ' + (i + 1) + ' de ' + N + ': ' +
-      p.name + (p.category ? ', ' + p.category : '') +
-      '. Arrastrá o usá las flechas del teclado para explorar.');
-    if (live && !initial) live.textContent = 'Proyecto ' + (i + 1) + ' de ' + N + ': ' + p.name;
+    var vars = { i: i + 1, n: N, name: p.name + (p.category ? ', ' + p.category : '') };
+    canvas.setAttribute('aria-label', I18n.format('reel.label', vars));
+    if (live && !initial) live.textContent = I18n.format('reel.live', { i: i + 1, n: N, name: p.name });
   }
+
+  // Al cambiar de idioma se vuelve a anunciar el proyecto actual en el idioma nuevo
+  document.addEventListener('langchange', function () { announced = -1; announce(true); });
 
   function update(dt) {
     var prev = phase;

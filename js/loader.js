@@ -10,7 +10,7 @@
   var loader = document.getElementById('loader');
   // Buscar el <main> principal (funciona en index.html, sobre-mi.html, stack.html, contacto.html)
   var main = document.querySelector('main');
-  if (!loader || !main) return;
+  if (!main) return;
 
   var reduceMotion = window.matchMedia &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -22,7 +22,7 @@
   function clearTimers() { timers.forEach(clearTimeout); timers = []; }
 
   // Mientras carga, el contenido de atrás no es accesible
-  main.setAttribute('inert', '');
+  if (loader) main.setAttribute('inert', '');
 
   function done() {
     if (loader.parentNode) loader.parentNode.removeChild(loader);
@@ -65,29 +65,23 @@
     return strokes;
   }
 
-  // Construye el logo estático en la esquina superior izquierda (legacy) y en el header
+  // Logo estático de la cabecera (se dibuja una sola vez, sin animación)
   function buildStaticLogo(data) {
-    // Logo legacy (por compatibilidad)
-    var svgLegacy = document.querySelector('.site-logo__svg');
-    if (svgLegacy) {
-      svgLegacy.setAttribute('viewBox', data.viewBox);
-      var fillLegacy = svgEl('path', {
-        'class': 'logo-fill',
-        d: data.paths.map(function (p) { return p.d; }).join('')
-      });
-      svgLegacy.appendChild(fillLegacy);
-    }
+    var svg = document.querySelector('.site-header__logo');
+    if (!svg) return;
+    svg.setAttribute('viewBox', data.viewBox);
+    svg.appendChild(svgEl('path', {
+      'class': 'logo-fill',
+      d: data.paths.map(function (p) { return p.d; }).join('')
+    }));
+  }
 
-    // Logo en el header (nuevo)
-    var svgHeader = document.querySelector('.site-header__logo');
-    if (svgHeader) {
-      svgHeader.setAttribute('viewBox', data.viewBox);
-      var fillHeader = svgEl('path', {
-        'class': 'logo-fill',
-        d: data.paths.map(function (p) { return p.d; }).join('')
-      });
-      svgHeader.appendChild(fillHeader);
-    }
+  // Intro ya vista en esta sesión (ver js/layout.js): solo logo y contenido, sin animación
+  function skipIntro() {
+    try {
+      if (window.LOGO_DATA) buildStaticLogo(window.LOGO_DATA);
+    } catch (err) { /* el logo es decorativo */ }
+    body.classList.add('is-ready');
   }
 
   function start() {
@@ -147,7 +141,9 @@
   }
 
   // No arrancar la animación con la pestaña en segundo plano
-  if (document.visibilityState === 'hidden') {
+  if (!loader) {
+    skipIntro();
+  } else if (document.visibilityState === 'hidden') {
     var onVisible = function () {
       if (document.visibilityState === 'visible') {
         document.removeEventListener('visibilitychange', onVisible);
