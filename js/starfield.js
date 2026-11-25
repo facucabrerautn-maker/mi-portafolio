@@ -7,6 +7,7 @@
    - Cerca del texto central (portada) las estrellas se atenúan para no pelear con él.
    - Se pausa cuando #inicio no se ve o la pestaña está en segundo plano.
    - Con "reducir movimiento" se dibuja un cuadro fijo, sin animación.
+   - Se adapta al tema claro/oscuro: estrellas oscuras en modo claro, claras en modo oscuro.
    ========================================================================== */
 (function () {
   'use strict';
@@ -28,12 +29,20 @@
   var w = 0, h = 0, dpr = 1;
   var running = false, inView = true, raf = 0, lastCount = 0;
 
-  var TINTS = [
+  // Colores de estrellas según tema: modo oscuro = claras, modo claro = oscuras
+  var TINTS_DARK = [
     [214, 232, 255],   // blanco azulado (la mayoría)
     [214, 232, 255],
     [214, 232, 255],
     [255, 236, 190]    // blanco cálido, como las estrellas de la ilustración
   ];
+  var TINTS_LIGHT = [
+    [30, 60, 110],     // azul oscuro
+    [30, 60, 110],
+    [30, 60, 110],
+    [120, 80, 30]      // dorado oscuro
+  ];
+  var TINTS = TINTS_DARK; // inicial, se actualiza en applyTheme()
 
   function rand(a, b) { return a + Math.random() * (b - a); }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
@@ -49,7 +58,14 @@
     };
     if (kind === 0) { s.r = rand(0.35, 0.95); s.a = rand(0.25, 0.8); }
     if (kind === 1) { s.r = rand(1.0, 1.7);  s.a = rand(0.55, 0.95); }
-    if (kind === 2) { s.r = rand(4.5, 8.5);  s.a = rand(0.8, 1); s.rot = rand(-0.2, 0.2); s.tint = Math.random() < 0.7 ? [255, 236, 190] : [255, 255, 255]; }
+    if (kind === 2) {
+      s.r = rand(4.5, 8.5); s.a = rand(0.8, 1); s.rot = rand(-0.2, 0.2);
+      // Estrellas grandes: en modo oscuro = cálidas/blancas, en modo claro = dorado oscuro/azul oscuro
+      var isLight = document.documentElement.classList.contains('light-mode');
+      s.tint = isLight
+        ? (Math.random() < 0.7 ? [120, 80, 30] : [30, 60, 110])
+        : (Math.random() < 0.7 ? [255, 236, 190] : [255, 255, 255]);
+    }
     return s;
   }
 
@@ -187,12 +203,21 @@
     var tx = hx - shooting.dir * Math.cos(shooting.ang) * shooting.len;
     var ty = hy - Math.sin(shooting.ang) * shooting.len;
     var fade = Math.sin(k * Math.PI);                 // aparece y se apaga
+    var isLight = document.documentElement.classList.contains('light-mode');
     var g = ctx.createLinearGradient(tx, ty, hx, hy);
-    g.addColorStop(0, 'rgba(255,255,255,0)');
-    g.addColorStop(1, 'rgba(255,244,214,' + (0.85 * fade).toFixed(3) + ')');
-    ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
-    ctx.fillStyle = 'rgba(255,248,230,' + (0.9 * fade).toFixed(3) + ')';
+    if (isLight) {
+      g.addColorStop(0, 'rgba(30,60,110,0)');
+      g.addColorStop(1, 'rgba(30,60,110,' + (0.85 * fade).toFixed(3) + ')');
+      ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+      ctx.fillStyle = 'rgba(30,60,110,' + (0.9 * fade).toFixed(3) + ')';
+    } else {
+      g.addColorStop(0, 'rgba(255,255,255,0)');
+      g.addColorStop(1, 'rgba(255,244,214,' + (0.85 * fade).toFixed(3) + ')');
+      ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,248,230,' + (0.9 * fade).toFixed(3) + ')';
+    }
     ctx.beginPath(); ctx.arc(hx, hy, 1.7, 0, 6.2832); ctx.fill();
   }
 
@@ -220,6 +245,25 @@
   }
 
   function sync() { setRunning(inView && !document.hidden); }
+
+  // Detectar tema y actualizar colores de estrellas
+  function applyTheme() {
+    var isLight = document.documentElement.classList.contains('light-mode');
+    TINTS = isLight ? TINTS_LIGHT : TINTS_DARK;
+    // Re-poblar estrellas con nuevos colores
+    populate();
+    keepBigStarsClear();
+    if (!running) draw(performance.now());
+  }
+
+  // Aplicar tema inicial
+  applyTheme();
+
+  // Escuchar cambios de tema (el botón de tema togglea la clase en <html>)
+  var themeObserver = new MutationObserver(function () {
+    applyTheme();
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
   resize();
   if ('ResizeObserver' in window) {

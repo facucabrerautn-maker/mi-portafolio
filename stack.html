@@ -79,27 +79,40 @@
 
   <main id="stack" tabindex="-1">
 
-    <!-- Cielo estrellado continuo -->
+    <!-- Cielo unificado: estrellas (dark) / nubes (light) — js/sky.js -->
     <canvas class="site-sky" id="sky" aria-hidden="true"></canvas>
 
     <!-- Stack / Habilidades -->
     <section class="stack-page" aria-labelledby="stack-title">
       <div class="stack-page__inner">
-        <header class="stack-page__header">
-          <h1 id="stack-title" class="stack-page__title" data-i18n="stack.title">Stack tecnológico</h1>
-          <p class="stack-page__subtitle" data-i18n="stack.subtitle">Herramientas y tecnologías que uso habitualmente</p>
-        </header>
         <div class="stack-page__categories" role="list" aria-label="Categorías de tecnologías">
           <!-- Se llena dinámicamente desde js/stack-data.js -->
         </div>
       </div>
     </section>
 
+    <!-- Footer genérico con navegación -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer__inner">
+        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+          <ul class="site-footer__list" role="list">
+            <li><a class="site-footer__link" href="index.html#proyectos" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a class="site-footer__link" href="sobre-mi.html" data-i18n="nav.about">Sobre mí</a></li>
+            <li><a class="site-footer__link" href="stack.html" data-i18n="nav.stack" aria-current="page">Stack</a></li>
+            <li><a class="site-footer__link" href="contacto.html" data-i18n="nav.contact">Contacto</a></li>
+          </ul>
+        </nav>
+        <p class="site-footer__copy" aria-hidden="true">
+          <span class="footer-brand">Made by Facu</span> · <span data-i18n="footer.rights">Todos los derechos reservados</span>
+        </p>
+      </div>
+    </footer>
+
   </main>
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
-  <script src="js/starfield.js"></script>
+  <script src="js/sky.js"></script>
   <script src="js/stack-data.js"></script>
   <script src="js/stack-renderer.js"></script>
   <script src="js/site-header.js"></script>

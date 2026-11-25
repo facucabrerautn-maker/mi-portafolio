@@ -32,13 +32,23 @@
   var RADIUS = 0.085;                  // esquinas redondeadas
 
   /* ---------- Portadas provisionales (se dibujan en un canvas 2D) ---------- */
-  var TONES = [
+  // TONES para modo oscuro (fondos claros, textos oscuros)
+  var TONES_DARK = [
     ['#ebe7de', '#1b1b1b', '#c9c2b3'],
     ['#dfe4e8', '#16202a', '#b3bfca'],
     ['#e6dfd2', '#2a1f14', '#cdbfa6'],
     ['#dde5dc', '#16241a', '#b2c4b3'],
     ['#e5e0ea', '#221a2c', '#c6bdd3'],
     ['#e4e2dd', '#202020', '#bcb8ae']
+  ];
+  // TONES para modo claro (fondos oscuros, textos claros)
+  var TONES_LIGHT = [
+    ['#1a1a2e', '#fafafa', '#2d2d4a'],
+    ['#16202a', '#fafafa', '#1f3a4a'],
+    ['#2a1f14', '#fafafa', '#4a2d1a'],
+    ['#16241a', '#fafafa', '#1f3a2a'],
+    ['#221a2c', '#fafafa', '#3a2a4a'],
+    ['#202020', '#fafafa', '#3a3a3a']
   ];
   var FONT = '"Inter", "Helvetica Neue", Arial, sans-serif';
 
@@ -52,12 +62,16 @@
     g.closePath();
   }
 
+  function getTones() {
+    return document.documentElement.classList.contains('light-mode') ? TONES_LIGHT : TONES_DARK;
+  }
+
   function placeholderCanvas(index, project) {
     var w = 1280, h = 848;
     var c = document.createElement('canvas');
     c.width = w; c.height = h;
     var g = c.getContext('2d');
-    var t = TONES[index % TONES.length];
+    var t = getTones()[index % getTones().length];
 
     g.fillStyle = t[0];
     g.fillRect(0, 0, w, h);
@@ -289,6 +303,20 @@
       invalidate();
     };
     img.src = src; // si falla, se conserva la portada provisional
+  }
+
+  // Regenerar texturas placeholder al cambiar de tema
+  function refreshPlaceholders() {
+    if (destroyed || !gl) return;
+    PROJECTS.forEach(function (p, i) {
+      if (!p.cover) { // solo si usa placeholder
+        var card = cards[i];
+        var old = card.tex;
+        card.tex = makeTexture(placeholderCanvas(i, p));
+        gl.deleteTexture(old);
+      }
+    });
+    invalidate();
   }
 
   /* ---------- Matrices (column-major) ---------- */
@@ -617,6 +645,12 @@
   } else {
     inView = true;
   }
+
+  // Observar cambios de tema para regenerar placeholders
+  var themeObserver = new MutationObserver(function () {
+    refreshPlaceholders();
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
   layout();
   announce(true);

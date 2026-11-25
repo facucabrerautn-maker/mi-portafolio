@@ -79,27 +79,60 @@
 
   <main id="contacto" tabindex="-1">
 
-    <!-- Cielo estrellado continuo -->
+    <!-- Cielo unificado: estrellas (dark) / nubes (light) — js/sky.js -->
     <canvas class="site-sky" id="sky" aria-hidden="true"></canvas>
 
     <!-- Contacto -->
-    <section class="contact-page" aria-labelledby="contact-title">
+    <section class="contact-page" aria-label="Contacto">
       <div class="contact-page__inner">
-        <header class="contact-page__header">
-          <h1 id="contact-title" class="contact-page__title" data-i18n="contact.title">Contacto</h1>
-          <p class="contact-page__subtitle" data-i18n="contact.subtitle">¿Tienes un proyecto en mente? Me encantaría escucharte</p>
-        </header>
-        <div class="contact-page__links" role="list" aria-label="Métodos de contacto">
-          <!-- Se llena dinámicamente desde js/contact-dialog.js -->
+        <div class="contact-page__layout">
+          <!-- Lado izquierdo: placeholder CV -->
+          <div class="contact-page__cv-placeholder" aria-hidden="true">
+            <div class="contact-page__cv-image">
+              <!-- Aquí irá el PNG del CV -->
+            </div>
+            <span class="contact-page__cv-label" data-i18n="contact.cvLabel">CV / Curriculum</span>
+          </div>
+
+          <!-- Lado derecho: cápsulas de contacto en pila -->
+          <div class="contact-page__actions" role="list" aria-label="Métodos de contacto">
+            <div class="contact-page__links">
+              <!-- Se llena dinámicamente desde js/contact-page.js -->
+            </div>
+            <!-- Cápsula extra: Descargar CV (placeholder) -->
+            <a class="contact-page__link contact-page__link--cv" href="#" aria-label="Descargar CV">
+              <span class="contact-page__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              </span>
+              <span class="contact-page__text" data-i18n="contact.downloadCv">Descargar CV</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- Footer genérico con navegación -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer__inner">
+        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+          <ul class="site-footer__list" role="list">
+            <li><a class="site-footer__link" href="index.html#proyectos" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a class="site-footer__link" href="sobre-mi.html" data-i18n="nav.about">Sobre mí</a></li>
+            <li><a class="site-footer__link" href="stack.html" data-i18n="nav.stack">Stack</a></li>
+            <li><a class="site-footer__link" href="contacto.html" data-i18n="nav.contact" aria-current="page">Contacto</a></li>
+          </ul>
+        </nav>
+        <p class="site-footer__copy" aria-hidden="true">
+          <span class="footer-brand">Made by Facu</span> · <span data-i18n="footer.rights">Todos los derechos reservados</span>
+        </p>
+      </div>
+    </footer>
 
   </main>
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
-  <script src="js/starfield.js"></script>
+  <script src="js/sky.js"></script>
   <script src="js/contact-page.js"></script>
   <script src="js/site-header.js"></script>
   <script src="js/i18n.js"></script>

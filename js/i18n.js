@@ -27,7 +27,11 @@
       },
       stack: {
         title: 'Stack tecnológico',
-        subtitle: 'Herramientas y tecnologías que uso habitualmente'
+        subtitle: 'Herramientas y tecnologías que uso habitualmente',
+        intro: 'Estas son las tecnologías con las que diseño, desarrollo y despliego mis proyectos',
+        frontend: 'Frontend',
+        backend: 'Backend y Base de datos',
+        tools: 'Herramientas'
       },
       contact: {
         title: 'Contacto',
@@ -35,7 +39,9 @@
         button: 'Contacto',
         github: 'GitHub',
         email: 'Email',
-        whatsapp: 'WhatsApp'
+        whatsapp: 'WhatsApp',
+        cvLabel: 'CV / Curriculum',
+        downloadCv: 'Descargar CV'
       },
       lang: {
         current: 'ES'
@@ -67,7 +73,11 @@
       },
       stack: {
         title: 'Tech Stack',
-        subtitle: 'Tools and technologies I use regularly'
+        subtitle: 'Tools and technologies I use regularly',
+        intro: 'These are the technologies I use to design, develop, and deploy my projects',
+        frontend: 'Frontend',
+        backend: 'Backend & Databases',
+        tools: 'Tools'
       },
       contact: {
         title: 'Contact',
@@ -75,7 +85,9 @@
         button: 'Contact',
         github: 'GitHub',
         email: 'Email',
-        whatsapp: 'WhatsApp'
+        whatsapp: 'WhatsApp',
+        cvLabel: 'CV / Resume',
+        downloadCv: 'Download CV'
       },
       lang: {
         current: 'EN'

@@ -82,31 +82,50 @@
 
   <main id="sobre-mi" tabindex="-1">
 
-    <!-- Cielo estrellado continuo (js/starfield.js) -->
+    <!-- Cielo unificado: estrellas (dark) / nubes (light) — js/sky.js -->
     <canvas class="site-sky" id="sky" aria-hidden="true"></canvas>
 
-    <!-- Sobre mí: misma estética que home, nombre izq, texto der, espacio personaje -->
+    <!-- Sobre mí: layout asimétrico con contenedor, nombre izq, personaje abajo izq, texto der -->
     <section class="about-page" aria-labelledby="about-title">
       <div class="about-page__inner">
-        <div class="about-page__header">
-          <h1 id="about-title" class="about-page__title" data-i18n="about.title">Sobre mí</h1>
-          <p class="about-page__name" aria-hidden="true">Facundo Cabrera</p>
-          <!-- Espacio reservado para personaje futuro (debajo del nombre) -->
-          <div class="about-page__character-spacer" aria-hidden="true"></div>
-        </div>
-        <div class="about-page__content">
-          <div class="about-page__text-wrapper" data-i18n="about.content">
-            <!-- Contenido se inyecta via i18n -->
+        <div class="about-page__layout">
+          <!-- Columna izquierda: nombre + espacio personaje -->
+          <div class="about-page__left">
+            <h1 id="about-title" class="about-page__name" aria-hidden="true">Facundo Cabrera</h1>
+            <div class="about-page__character-spacer" aria-hidden="true"></div>
+          </div>
+          <!-- Columna derecha: contenido textual -->
+          <div class="about-page__right">
+            <div class="about-page__text-wrapper" data-i18n="about.content">
+              <!-- Contenido se inyecta via i18n -->
+            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- Footer genérico con navegación -->
+    <footer class="site-footer" role="contentinfo">
+      <div class="site-footer__inner">
+        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+          <ul class="site-footer__list" role="list">
+            <li><a class="site-footer__link" href="index.html#proyectos" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a class="site-footer__link" href="sobre-mi.html" data-i18n="nav.about" aria-current="page">Sobre mí</a></li>
+            <li><a class="site-footer__link" href="stack.html" data-i18n="nav.stack">Stack</a></li>
+            <li><a class="site-footer__link" href="contacto.html" data-i18n="nav.contact">Contacto</a></li>
+          </ul>
+        </nav>
+        <p class="site-footer__copy" aria-hidden="true">
+          <span class="footer-brand">Made by Facu</span> · <span data-i18n="footer.rights">Todos los derechos reservados</span>
+        </p>
+      </div>
+    </footer>
+
   </main>
 
   <script src="assets/logo-paths.js"></script>
   <script src="js/loader.js"></script>
-  <script src="js/starfield.js"></script>
+  <script src="js/sky.js"></script>
   <script src="js/site-header.js"></script>
   <script src="js/i18n.js"></script>
 </body>
