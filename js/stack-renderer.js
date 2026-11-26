@@ -9,7 +9,6 @@
   if (!container) return;
 
   var data = window.STACK_DATA || {};
-  var icons = window.STACK_ICONS || {};
 
   // Mapeo de claves de categoría a claves de i18n
   var categoryI18nMap = {
@@ -55,7 +54,7 @@
         var badge = document.createElement('span');
         badge.className = 'stack-page__badge';
 
-        var iconHtml = icons[item.icon] || '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>';
+        var iconHtml = window.Icons.svg(item.icon);
         badge.innerHTML = '<span class="stack-page__badge-icon">' + iconHtml + '</span><span class="stack-page__badge-text">' + item.name + '</span>';
 
         itemsContainer.appendChild(badge);

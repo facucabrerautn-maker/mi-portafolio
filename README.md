@@ -14,6 +14,7 @@ Sitio estático (HTML, CSS y JS sin dependencias). Se abre con cualquier servido
 | `js/loader.js` + `assets/logo-paths.js` | Intro con el logo dibujándose y logo de la cabecera. |
 | `js/projects-data.js`, `js/projects-reel.js` | Carrete 3D (WebGL) de proyectos; los proyectos se editan en `projects-data.js`. |
 | `js/stack-data.js`, `js/stack-renderer.js`, `js/contact-page.js` | Contenido de Stack y Contacto. |
+| `js/icons.js` | Íconos de tecnologías y contacto (SVG inline). Para sumar uno, agregá su `d` ahí y usá el nombre en `stack-data.js`. |
 
 ## Pendiente de completar
 - Enlaces reales en `js/contact-page.js` (GitHub, email, WhatsApp) y el CV.
