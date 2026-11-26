@@ -27,20 +27,17 @@
     <!-- Cielo unificado: estrellas (oscuro) / nubes (claro) — js/sky.js -->
     <canvas class="site-sky" id="sky" aria-hidden="true"></canvas>
 
-    <!-- Sobre mí: layout asimétrico con contenedor, nombre izq, personaje abajo izq, texto der -->
+    <!-- Sobre mí: columna centrada con nombre, personaje y texto -->
     <section class="about-page" aria-labelledby="about-title">
       <div class="about-page__inner">
         <div class="about-page__layout">
-          <!-- Columna izquierda: nombre + espacio personaje -->
-          <div class="about-page__left">
-            <h1 id="about-title" class="about-page__name">Facundo Cabrera</h1>
-            <div class="about-page__character-spacer" aria-hidden="true"></div>
-          </div>
-          <!-- Columna derecha: contenido textual -->
-          <div class="about-page__right">
-            <div class="about-page__text-wrapper" data-i18n="about.content">
-              <p>Soy Facundo, estudiante de programación apasionado por crear experiencias digitales que sean funcionales, bonitas y accesibles.</p><p>Me gusta entender cómo funcionan las cosas por dentro: desde el navegador hasta el servidor, pasando por la base de datos. Disfruto escribir código limpio, bien estructurado y que otros puedan leer y mantener.</p><p>Cuando no estoy programando, me encontrarás aprendiendo algo nuevo, jugando videojuegos o tomando mate.</p>
-            </div>
+          <h1 id="about-title" class="about-page__name">Facundo Cabrera</h1>
+          <figure class="about-page__character">
+            <img src="assets/personaje-sentado.webp" width="720" height="1005" decoding="async"
+                 alt="Ilustración 3D de Facu sentado con las piernas cruzadas, con anteojos y remera negra, usando una laptop">
+          </figure>
+          <div class="about-page__text-wrapper" data-i18n="about.content">
+            <p>Soy Facundo, estudiante de programación apasionado por crear experiencias digitales que sean funcionales, bonitas y accesibles.</p><p>Me gusta entender cómo funcionan las cosas por dentro: desde el navegador hasta el servidor, pasando por la base de datos. Disfruto escribir código limpio, bien estructurado y que otros puedan leer y mantener.</p><p>Cuando no estoy programando, me encontrarás aprendiendo algo nuevo, jugando videojuegos o tomando mate.</p>
           </div>
         </div>
       </div>

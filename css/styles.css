@@ -52,16 +52,17 @@ html.light-mode .home__message em {
   color: var(--accent);
 }
 
-/* Logo (esquina y cabecera): un trazo claro fino define los recortes (gafas/ojos) */
-
-html.light-mode .site-header__logo .logo-fill {
-  stroke: rgba(255, 255, 255, 0.9);
-  stroke-width: 1.5;
-  paint-order: stroke fill;
-}
-
 html.light-mode .site-header__btn {
   color: var(--fg);
+}
+
+/* Logo siempre blanco: en modo claro se apoya en el cielo azul y una sombra suave */
+html.light-mode .loader {
+  background: linear-gradient(to bottom, #4f9fe0, #86c6f3);
+}
+html.light-mode .loader__logo,
+html.light-mode .site-header__logo {
+  filter: drop-shadow(0 2px 10px rgba(11, 26, 47, 0.45));
 }
 
 html.light-mode .loader__skip {
@@ -89,31 +90,13 @@ html {
   }
 }
 
-/* Fondo unificado: UN solo gradiente continuo sobre todo el <main> (portada + proyectos),
-   para que no haya costura entre secciones.
-   Paleta: #071B3A (bordes, oscuro) → #75DCFF (centro, brillante).
-   La capa "portada" oscurece SOLO la zona de la portada para contraste del texto. */
+/* Fondo oscuro único para TODAS las páginas (portada + proyectos incluidos):
+   azul profundo en el centro → casi negro en los bordes. */
 #inicio {
-  position: relative;
   outline: none;
-  background:
-    radial-gradient(rgba(255, 255, 255, 0.03) 0.5px, transparent 0.7px) 0 0 / 6px 6px, /* puntos sutiles */
-    linear-gradient(                                                                   /* portada */
-      to bottom,
-      rgba(3, 14, 42, 0.5) 0,
-      rgba(3, 14, 42, 0.5) calc(100% - 100vh - 20px),
-      rgba(3, 14, 42, 0) calc(100% - 100vh + 120px)
-    ),
-    linear-gradient(rgba(10, 10, 10, 0.35), rgba(10, 10, 10, 0.35)),                  /* oscurece global */
-    radial-gradient(
-      ellipse 85% 60% at 50% 30%,
-      #75DCFF 0%, #54CCFA 11%, #36B9F5 22%, #20A6F0 33%, #168FE5 44%,
-      #1678D2 55%, #145DA8 66%, #10447F 77%, #0A2D5E 88%, #071B3A 100%
-    ),
-    var(--bg);
 }
 
-/* Páginas interiores (Sobre mí, Stack, Contacto): azul profundo → negro en los bordes */
+#inicio,
 #sobre-mi,
 #stack,
 #contacto {
@@ -227,7 +210,7 @@ body {
 /* Contornos que se dibujan */
 .loader__logo .stroke {
   fill: none;
-  stroke: var(--fg);
+  stroke: #fff;
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -262,7 +245,7 @@ body {
 
 /* Relleno que aparece cuando todos los contornos terminaron */
 .loader__logo .fill {
-  fill: var(--fg);
+  fill: #fff;
   fill-rule: evenodd;
   opacity: 0;
 }
@@ -676,23 +659,16 @@ body {
   margin: 0 auto;
 }
 
-/* --- Sobre mí (página) --- */
-/* Layout principal: grid asimétrico 2 columnas */
+/* --- Sobre mí (página): todo centrado en una sola columna: nombre, personaje y texto --- */
 .about-page__layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(40px, 6vw, 80px);
-  align-items: start;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-top: clamp(20px, 4vh, 40px);
-}
-
-/* Columna izquierda: nombre + personaje */
-.about-page__left {
   display: flex;
   flex-direction: column;
-  gap: clamp(30px, 5vh, 50px);
+  align-items: center;
+  gap: clamp(20px, 3.5vh, 36px);
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: clamp(20px, 4vh, 40px);
+  text-align: center;
 }
 
 .about-page__name {
@@ -706,119 +682,41 @@ body {
   text-shadow: 0 4px 60px rgba(3, 14, 42, 0.5);
 }
 
-/* Espacio para personaje: silueta sugerida con gradiente nocturno */
-.about-page__character-spacer {
-  position: relative;
+.about-page__character {
+  margin: 0;
+  width: min(300px, 62vw);
+  pointer-events: none;
+}
+
+.about-page__character img {
+  display: block;
   width: 100%;
-  max-width: 420px;
-  aspect-ratio: 3 / 4;
-  min-height: 320px;
-  max-height: 480px;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(117, 220, 255, 0.08) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 90%, rgba(54, 185, 245, 0.06) 0%, transparent 50%);
-  border-radius: 40% 40% 8% 8% / 55% 55% 5% 5%;
-  opacity: 0.7;
-  /* Animación sutil de respiración */
-  animation: character-breath 6s ease-in-out infinite;
-}
-
-@keyframes character-breath {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50%      { transform: scale(1.015); opacity: 0.85; }
-}
-
-.about-page__character-spacer::before {
-  content: '';
-  position: absolute;
-  bottom: 2%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 70%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  border-radius: 2px;
-  opacity: 0.3;
-  filter: blur(1px);
-}
-
-/* Columna derecha: texto */
-.about-page__right {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-top: clamp(20px, 3vh, 40px);
+  height: auto;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.35));
 }
 
 .about-page__text-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
   font-size: clamp(1rem, 1.1vw, 1.125rem);
-  line-height: 1.85;
+  line-height: 1.8;
   color: var(--fg);
-  text-align: left;
+  text-align: center;
+  text-wrap: pretty;
 }
 
 .about-page__text-wrapper p {
   margin: 0;
 }
 
-/* Responsive: apilar en móvil */
-@media (max-width: 860px) {
-  .about-page__layout {
-    grid-template-columns: 1fr;
-    gap: clamp(30px, 5vh, 50px);
-    text-align: center;
-  }
-
-  .about-page__left {
-    align-items: center;
-    text-align: center;
-  }
-
-  .about-page__name {
-    font-size: clamp(2.5rem, 7vw, 3.5rem);
-  }
-
-  .about-page__character-spacer {
-    max-width: 380px;
-  }
-
-  .about-page__right {
-    padding-top: 0;
-  }
-
-  .about-page__text-wrapper {
-    text-align: center;
-  }
-}
-
-@media (max-width: 600px) {
-  .about-page__name {
-    font-size: clamp(2rem, 8vw, 2.8rem);
-  }
-
-  .about-page__character-spacer {
-    min-height: 240px;
-    max-height: 340px;
-  }
-}
-
-/* Light mode adjustments para about-page */
+/* Modo claro */
 html.light-mode .about-page__name {
   text-shadow: 0 2px 40px rgba(255, 255, 255, 0.55);
 }
 
-html.light-mode .about-page__character-spacer {
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(0, 102, 204, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 50% 90%, rgba(0, 80, 160, 0.04) 0%, transparent 50%);
-}
-
-html.light-mode .about-page__character-spacer::before {
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.4;
+html.light-mode .about-page__character img {
+  filter: drop-shadow(0 18px 24px rgba(20, 60, 110, 0.3));
 }
 
 /* --- Stack (página) Bent Grid --- */
@@ -1166,13 +1064,7 @@ html.light-mode .contact-page__link--cv {
   }
 
   .about-page__name {
-    margin-bottom: clamp(40px, 8vh, 60px);
     font-size: clamp(2.5rem, 8vw, 4rem);
-  }
-
-  .about-page__character-spacer {
-    min-height: 200px;
-    max-height: 300px;
   }
 
   .contact-page__link {
@@ -1210,7 +1102,7 @@ html.light-mode .contact-page__link--cv {
   border-bottom: 1px solid var(--border);
 }
 html.light-mode .site-header.is-scrolled {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(120, 180, 235, 0.78);
   box-shadow: 0 6px 24px var(--shadow);
 }
 
@@ -1240,7 +1132,7 @@ html.light-mode .site-header.is-scrolled {
 
 /* Los trazos del logo se inyectan desde js/loader.js; sin esta regla se pintaban de negro */
 .site-header__logo .logo-fill {
-  fill: var(--fg);
+  fill: #fff;
   fill-rule: evenodd;
 }
 
