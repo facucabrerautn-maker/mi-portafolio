@@ -127,11 +127,9 @@
         if (!target) return;
 
         e.preventDefault();
-        var headerHeight = document.querySelector('.site-header')?.offsetHeight || 0;
-        var targetPosition = target.getBoundingClientRect().top + window.scrollY - headerHeight;
-
+        // La sección ya trae su propio padding-top para la cabecera fija: se alinea al borde superior
         window.scrollTo({
-          top: targetPosition,
+          top: target.getBoundingClientRect().top + window.scrollY,
           behavior: 'smooth'
         });
 

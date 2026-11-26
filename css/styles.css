@@ -408,17 +408,18 @@ body {
    Fade sutil SOLO en el borde izquierdo (césped→cielo), personaje 100% visible. */
 .home__character {
   position: absolute;
-  right: 0;
-  bottom: 0;
+  right: clamp(8px, 3vw, 56px);
+  bottom: clamp(8px, 2vh, 24px);   /* la isla flotante queda ENTERA dentro de la portada: sin cortes al scrollear */
   z-index: 1;
-  width: min(62vw, 880px);
+  width: min(40vw, 560px);
   margin: 0;
   pointer-events: none;
-  /* Máscara: fade horizontal suave en el 25% izquierdo; resto 100% opaco */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 25%, #000 100%);
-  mask-image: linear-gradient(to right, transparent 0%, #000 25%, #000 100%);
+  animation: island-float 7s ease-in-out infinite;
 }
-
+@keyframes island-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
 .home__character img {
   display: block;
   width: 100%;
@@ -457,19 +458,22 @@ body {
 
 @media (max-width: 860px) {
   .home__character {
-    width: min(100vw, 700px);
+    width: min(80vw, 560px);
   }
 }
 
 @media (max-width: 600px) {
-  /* En pantallas angostas el personaje se agranda un poco y se recorta por el borde derecho */
   .home__character {
-    width: 112vw;
-    right: -6vw;
+    width: 92vw;
+    right: 4vw;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home__character {
+    animation: none;
+  }
+
   .js .home__message {
     transform: none;
     filter: none;
@@ -516,7 +520,8 @@ body {
   min-height: 100vh;
   min-height: 100dvh;
   padding-top: clamp(80px, 12vh, 120px);  /* espacio para header fijo */
-  scroll-margin-top: clamp(80px, 12vh, 120px);  /* offset para anclas: header fijo */
+  /* El anclaje deja la sección completa en pantalla; la cabecera se apoya en el padding-top de arriba. */
+  scroll-margin-top: 0;
   /* overflow: hidden eliminado: el canvas ya es position:absolute inset:0,
      y el fondo degradado continuo viene de #inicio (main). Así no hay corte. */
 }
@@ -530,6 +535,9 @@ body {
   width: 100%;
   height: 100%;
   background: transparent !important;  /* fuerza transparencia por si el clearColor falla */
+  /* Fundido en los bordes superior/inferior: las tarjetas no se cortan en seco entre secciones */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 9%, #000 91%, transparent 100%);
   cursor: grab;
   touch-action: pan-y;
   user-select: none;
@@ -684,7 +692,7 @@ body {
 
 .about-page__character {
   margin: 0;
-  width: min(300px, 62vw);
+  width: min(400px, 72vw);
   pointer-events: none;
 }
 
